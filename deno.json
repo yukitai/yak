@@ -1,0 +1,7 @@
+{
+  "tasks": {
+    "cli": "deno run yak.ts",
+    "dev": "deno run --watch --allow-all yak_dev.ts",
+    "grammar": "deno run --allow-read=. --allow-write=. ./grammar/generate.ts && deno test ./grammar/tests/*.ts"
+  }
+}

@@ -1,0 +1,72 @@
+---
+
+import { Span } from '../src/error/span.ts'
+
+---
+
+File := {body=Defition* $} | {body=Expr $} 
+
+_ := '\s*'
+
+IdentPart  := {'r#' raw=_IdentRaw
+                .str = string {
+                    const str = "r#" + this.raw.str
+                    this.raw = undefined as any
+                    return str
+                }} | str='[a-zA-Z_][a-zA-Z_0-9]*'
+_IdentRaw  := {str='#' | {raw='\S' next=_IdentRaw
+                .str = string {
+                    const s = ({ raw, next }: any): string => next ? raw + next.str : "#"
+                    return s(this)
+                }
+             }}
+Ident      := begin=@ part=IdentPart tail={'::' part=IdentPart}*  end=@
+                .str = string {
+                    return this.tail.reduce((a: string, b: any): string => a + "::" + b.part.str, this.part.str)
+                }
+                .span = Span { return new Span(this.begin, this.end) }
+TypedIdent := begin=@ Ident {_ ':' _ Type}? end=@
+                .span = Span { return new Span(this.begin, this.end) }
+
+Unit := begin=@ 'unit' end=@
+        .span = Span { return new Span(this.begin, this.end) }
+Type := ty=Unit | ty=Placeholder
+
+Attribute := begin=@ '@' _ name=Ident end=@
+                .span = Span { return new Span(this.begin, this.end) }
+
+Defition :=
+            attrs={Attribute _}*
+            begin=@ 'def' _ name=Ident _ '\(' _
+                arg0=TypedIdent? args={_ ',' _ arg=TypedIdent}* _ ','? _ 
+            '\)' {_ '->' _ ty=Type}? _ ':' end=@ _ body=Block
+            .span = Span { return new Span(this.begin, this.end) }
+
+Block := begin=@ stmts={stmt=Stmt _ ';' _}* expr=Expr end=@
+            .span = Span { return new Span(this.begin, this.end) }
+
+ReturnStmt := begin=@ 'return' _ expr=Expr end=@
+                .span = Span { return new Span(this.begin, this.end) }
+Stmt       := stmt=ReturnStmt | stmt=Expr
+
+Expr        := begin=@ expr=Term end=@
+                .span = Span { return new Span(this.begin, this.end) }
+Term        := begin=@ expr={{expr=Factor _ op={'\*' | '\/'} _ next=Term} | expr=Factor} end=@
+                .span = Span { return new Span(this.begin, this.end) }
+Factor      := begin=@ expr={{expr=Call _ op={'\+' | '\-'} _ next=Factor} | expr=Call} end=@
+                .span = Span { return new Span(this.begin, this.end) }
+Call        := begin=@ expr=Unary tail={_ expr=Dot | expr=CallParen}* end=@
+                .span = Span { return new Span(this.begin, this.end) }
+Dot         := '.' _ expr=Unary
+CallParen   := '\(' _ first=Expr? last={_ ',' _ expr=Expr}* _ ','? _ '\)'
+Unary       := begin=@ op={prefix='\+' | '\-' | '\!' _}* expr=Binary end=@
+                .span = Span { return new Span(this.begin, this.end) }
+Binary      := begin=@ expr={bin=Num | bin=Ident | bin=Placeholder | {'\(' _ bin=Expr _ '\)'}} end=@
+                .span = Span { return new Span(this.begin, this.end) }
+Placeholder := begin=@ '\.\.\.' end=@
+                .span = Span { return new Span(this.begin, this.end) }
+Ignore      := begin=@ '_' end=@
+                .span = Span { return new Span(this.begin, this.end) }
+Num         := begin=@ num_str='(\.\d+)|(\d+(\.\d*)?)' end=@
+                .span = Span { return new Span(this.begin, this.end) }
+                .num = number { return parseFloat(this.num_str) }
