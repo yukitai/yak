@@ -1,5 +1,8 @@
+import { YakContext } from "../context.ts";
 import { ToStringable } from "../utils.ts";
 import { LIGHT, BOLD, CLEAR, GRAY, ITALLIC } from "./colors.ts";
+import { render_preview } from "./preview.ts";
+import { Span } from "./span.ts";
 
 class Info {
     msg: ToStringable
@@ -21,8 +24,7 @@ class ListInfo extends Info {
     static spliter = `${GRAY},${CLEAR}\n    `
 
     public constructor (msg: ToStringable, list: ToStringable[], overflow: number = 6) {
-        super(`\
-${msg}
+        super(`${msg}
     ${list.length > overflow ?
         list.slice(0, overflow).map(item => `${BOLD}${item}${CLEAR}`).join(ListInfo.spliter)
             + `${ITALLIC} and ${ListInfo.format_items(list.length - overflow)} more ...${CLEAR}` :
@@ -30,7 +32,18 @@ ${msg}
     }
 }
 
+class PreviewInfo extends Info {
+    public constructor (msg: ToStringable, span: Span, context: YakContext) {
+        const code_preview = render_preview(span.start, span.end, context.lines)
+        
+        super(`${msg}
+
+${code_preview}`)
+    }
+}
+
 export {
     Info,
     ListInfo,
+    PreviewInfo
 }

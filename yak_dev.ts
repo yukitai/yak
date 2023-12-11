@@ -1,22 +1,33 @@
 import { Lexer } from "./grammar/lexer.ts";
+import { TokenType } from "./grammar/token.ts";
 import { YakContext } from "./src/context.ts";
+import { CLEAR, CYAN } from "./src/error/colors.ts";
+import { YakError } from "./src/error/error.ts";
+import { align } from "./src/utils.ts";
 
 // const code = await Deno.readTextFile("./grammar/examples/example.yak")
 
-const code = "hello::world!"
+const code = `\
+@opcode("whengreenflagclicked")
+def main():
+  '''
+    this is the standard indent of the file
+  '''
+   return "BrokenIndentHere!"`
 
-const context = new YakContext(code)
+const context = new YakContext(code, "example.yak")
 
 const lexer = new Lexer(context)
 
-console.log(lexer.next_token())
+while (true) {
+    const token = lexer.next_token()
 
-/*const { ast, errs } = parse(context.code)
-
-if (errs) {
-    errs.forEach(err => {
-        console.log(handle_parser_error(err, context).toString())
-    })
-} else {
-    console.log(ast)
-}*/
+    if (token instanceof YakError) {
+        console.error(token.toString())
+    } else {
+        console.log(`${CYAN}${align(16, `<${token.ty}>`)}${CLEAR}: "${token.value}"`)
+        if (token.ty == TokenType.Eof) {
+            break
+        }
+    }
+}

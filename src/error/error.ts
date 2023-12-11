@@ -2,6 +2,7 @@ import { RED, BOLD, CYAN, CLEAR, ITALLIC } from "./colors.ts"
 import { Span } from "./span.ts";
 import { render_preview } from "./preview.ts";
 import { ToStringable } from "../utils.ts";
+import { YakContext } from "../context.ts";
 
 type Lines = string[]
 interface YakErrorKind { id: string, name: string }
@@ -22,15 +23,14 @@ class YakError {
         kind: YakErrorKind,
         msg: ToStringable,
         loc: Span,
-        src: Lines,
-        file: string,
+        context: YakContext,
         extras: ToStringable[],
     ) {
         this.kind = kind
         this.msg = msg
         this.loc = loc
-        this.src = src
-        this.file = file
+        this.src = context.lines
+        this.file = context.file
         this.extras = extras
     }
 

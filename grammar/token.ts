@@ -18,7 +18,10 @@ enum TokenType {
     Colon   = "colon",
     Comma   = "comma",
     Semi    = "semi",
+    Or      = "or",
+    At      = "symbol at",
 
+    OAssign   = "operator assign",
     OAdd      = "operator +",
     OSub      = "operator -",
     OMul      = "operator *",
@@ -44,7 +47,7 @@ enum TokenType {
     TUnit = "type unit",
     TList = "type list",
 
-    Indent = "indent",
+    NlIndent = "indent",
 
     Eof = "end of file"
 }
