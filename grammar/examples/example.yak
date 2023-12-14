@@ -1,0 +1,2 @@
+def main(name: str):
+    log("Hello,", name)

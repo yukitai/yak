@@ -23,7 +23,7 @@ class Lexer {
     indent_size: Nullable<number>
     indent_span: Nullable<Span>
 
-    public constructor (context: YakContext) {
+    constructor (context: YakContext) {
         this.overallPos = 0
         this.line = 1
         this.offset = 0
@@ -103,17 +103,17 @@ class Lexer {
         return /["']/.test(ch)
     }
 
-    public has_next (): boolean {
+    has_next (): boolean {
         return this.overallPos < this.raw.length
     }
 
-    public try_restore () {
+    try_restore () {
         while (this.has_next() && !Lexer.is_whitespace(this.peek())) {
             this.move()
         }
     }
 
-    public escape_whitespace(): number {
+    escape_whitespace(): number {
         let num = 0
         while (this.has_next() && Lexer.is_whitespace(this.peek())) {
             this.move()
@@ -122,7 +122,7 @@ class Lexer {
         return num
     }
 
-    public next_token (): Token | YakError {
+    next_token (): Token | YakError {
         this.escape_whitespace()
         const start = this.get_pos_info()
         let ty, end, value
@@ -206,6 +206,17 @@ class Lexer {
             ty = TokenType.Comma
             value = ","
             end = this.get_pos_info()
+        } else if (ch === ".") {
+            this.move()
+            if (this.peek(2) === "..") {
+                this.move(2)
+                ty = TokenType.Nothing
+                value = "..."
+            } else {
+                ty = TokenType.ODot
+                value = "."
+            }
+            end = this.get_pos_info()
         } else if (ch === ";") {
             this.move()
             ty = TokenType.Semi
@@ -224,7 +235,7 @@ class Lexer {
                 value = "->"
             } else {
                 ty = TokenType.OSub
-                value = "+"
+                value = "-"
             }
             end = this.get_pos_info()
         } else if (ch === "*") {
@@ -369,6 +380,9 @@ class Lexer {
             end = this.get_pos_info()
             value = this.value_from_range(start, end)
             switch (value) {
+            case "use":
+                ty = TokenType.KUse
+                break
             case "def":
                 ty = TokenType.KDef
                 break
@@ -384,6 +398,24 @@ class Lexer {
             case "mod":
                 ty = TokenType.OMod
                 break
+            case "if":
+                ty = TokenType.KIf
+                break
+            case "elif":
+                ty = TokenType.KElif
+                break
+            case "else":
+                ty = TokenType.KElse
+                break
+            case "while":
+                ty = TokenType.KWhile
+                break
+            case "for":
+                ty = TokenType.KFor
+                break
+            case "in":
+                ty = TokenType.KIn
+                break
             case "and":
                 ty = TokenType.OAnd
                 break
@@ -393,11 +425,27 @@ class Lexer {
             case "not":
                 ty = TokenType.ONot
                 break
-            case "unit":
+            /*case "unit":
                 ty = TokenType.TUnit
                 break
             case "list":
                 ty = TokenType.TList
+                break
+            case "num":
+                ty = TokenType.TNum
+                break
+            case "str":
+                ty = TokenType.TStr
+                break
+            case "bool":
+                ty = TokenType.TBool
+                break*/
+            case "unit":
+            case "list":
+            case "num":
+            case "str":
+            case "bool":
+                ty = TokenType.BuiltinType
                 break
             case "True":
             case "False":
@@ -432,9 +480,9 @@ class Lexer {
             end = this.get_pos_info()
             value = this.value_from_range(start, end)
         }
-        return {
-            ty, value, span: new Span(start, end as PosInfo)
-        } as Token
+        return new Token(
+            ty!, value!, new Span(start, end as PosInfo)
+        )
     }
 }
 

@@ -155,9 +155,9 @@ export interface IdentPart_2 {
     str: string;
 }
 export class IdentPart_$0 {
-    public kind: ASTKinds.IdentPart_$0 = ASTKinds.IdentPart_$0;
-    public raw: _IdentRaw;
-    public str: string;
+    kind: ASTKinds.IdentPart_$0 = ASTKinds.IdentPart_$0;
+    raw: _IdentRaw;
+    str: string;
     constructor(raw: _IdentRaw){
         this.raw = raw;
         this.str = ((): string => {
@@ -175,10 +175,10 @@ export interface _IdentRaw_$0_1 {
 }
 export type _IdentRaw_$0_2 = _IdentRaw_$0_$0;
 export class _IdentRaw_$0_$0 {
-    public kind: ASTKinds._IdentRaw_$0_$0 = ASTKinds._IdentRaw_$0_$0;
-    public raw: string;
-    public next: _IdentRaw;
-    public str: string;
+    kind: ASTKinds._IdentRaw_$0_$0 = ASTKinds._IdentRaw_$0_$0;
+    raw: string;
+    next: _IdentRaw;
+    str: string;
     constructor(raw: string, next: _IdentRaw){
         this.raw = raw;
         this.next = next;
@@ -189,13 +189,13 @@ export class _IdentRaw_$0_$0 {
     }
 }
 export class Ident {
-    public kind: ASTKinds.Ident = ASTKinds.Ident;
-    public begin: PosInfo;
-    public part: IdentPart;
-    public tail: Ident_$0[];
-    public end: PosInfo;
-    public str: string;
-    public span: Span;
+    kind: ASTKinds.Ident = ASTKinds.Ident;
+    begin: PosInfo;
+    part: IdentPart;
+    tail: Ident_$0[];
+    end: PosInfo;
+    str: string;
+    span: Span;
     constructor(begin: PosInfo, part: IdentPart, tail: Ident_$0[], end: PosInfo){
         this.begin = begin;
         this.part = part;
@@ -214,10 +214,10 @@ export interface Ident_$0 {
     part: IdentPart;
 }
 export class TypedIdent {
-    public kind: ASTKinds.TypedIdent = ASTKinds.TypedIdent;
-    public begin: PosInfo;
-    public end: PosInfo;
-    public span: Span;
+    kind: ASTKinds.TypedIdent = ASTKinds.TypedIdent;
+    begin: PosInfo;
+    end: PosInfo;
+    span: Span;
     constructor(begin: PosInfo, end: PosInfo){
         this.begin = begin;
         this.end = end;
@@ -230,10 +230,10 @@ export interface TypedIdent_$0 {
     kind: ASTKinds.TypedIdent_$0;
 }
 export class Unit {
-    public kind: ASTKinds.Unit = ASTKinds.Unit;
-    public begin: PosInfo;
-    public end: PosInfo;
-    public span: Span;
+    kind: ASTKinds.Unit = ASTKinds.Unit;
+    begin: PosInfo;
+    end: PosInfo;
+    span: Span;
     constructor(begin: PosInfo, end: PosInfo){
         this.begin = begin;
         this.end = end;
@@ -252,11 +252,11 @@ export interface Type_2 {
     ty: Placeholder;
 }
 export class Attribute {
-    public kind: ASTKinds.Attribute = ASTKinds.Attribute;
-    public begin: PosInfo;
-    public name: Ident;
-    public end: PosInfo;
-    public span: Span;
+    kind: ASTKinds.Attribute = ASTKinds.Attribute;
+    begin: PosInfo;
+    name: Ident;
+    end: PosInfo;
+    span: Span;
     constructor(begin: PosInfo, name: Ident, end: PosInfo){
         this.begin = begin;
         this.name = name;
@@ -267,15 +267,15 @@ export class Attribute {
     }
 }
 export class Defition {
-    public kind: ASTKinds.Defition = ASTKinds.Defition;
-    public attrs: Defition_$0[];
-    public begin: PosInfo;
-    public name: Ident;
-    public arg0: Nullable<TypedIdent>;
-    public args: Defition_$1[];
-    public end: PosInfo;
-    public body: Block;
-    public span: Span;
+    kind: ASTKinds.Defition = ASTKinds.Defition;
+    attrs: Defition_$0[];
+    begin: PosInfo;
+    name: Ident;
+    arg0: Nullable<TypedIdent>;
+    args: Defition_$1[];
+    end: PosInfo;
+    body: Block;
+    span: Span;
     constructor(attrs: Defition_$0[], begin: PosInfo, name: Ident, arg0: Nullable<TypedIdent>, args: Defition_$1[], end: PosInfo, body: Block){
         this.attrs = attrs;
         this.begin = begin;
@@ -301,12 +301,12 @@ export interface Defition_$2 {
     ty: Type;
 }
 export class Block {
-    public kind: ASTKinds.Block = ASTKinds.Block;
-    public begin: PosInfo;
-    public stmts: Block_$0[];
-    public expr: Expr;
-    public end: PosInfo;
-    public span: Span;
+    kind: ASTKinds.Block = ASTKinds.Block;
+    begin: PosInfo;
+    stmts: Block_$0[];
+    expr: Expr;
+    end: PosInfo;
+    span: Span;
     constructor(begin: PosInfo, stmts: Block_$0[], expr: Expr, end: PosInfo){
         this.begin = begin;
         this.stmts = stmts;
@@ -322,11 +322,11 @@ export interface Block_$0 {
     stmt: Stmt;
 }
 export class ReturnStmt {
-    public kind: ASTKinds.ReturnStmt = ASTKinds.ReturnStmt;
-    public begin: PosInfo;
-    public expr: Expr;
-    public end: PosInfo;
-    public span: Span;
+    kind: ASTKinds.ReturnStmt = ASTKinds.ReturnStmt;
+    begin: PosInfo;
+    expr: Expr;
+    end: PosInfo;
+    span: Span;
     constructor(begin: PosInfo, expr: Expr, end: PosInfo){
         this.begin = begin;
         this.expr = expr;
@@ -346,11 +346,11 @@ export interface Stmt_2 {
     stmt: Expr;
 }
 export class Expr {
-    public kind: ASTKinds.Expr = ASTKinds.Expr;
-    public begin: PosInfo;
-    public expr: Term;
-    public end: PosInfo;
-    public span: Span;
+    kind: ASTKinds.Expr = ASTKinds.Expr;
+    begin: PosInfo;
+    expr: Term;
+    end: PosInfo;
+    span: Span;
     constructor(begin: PosInfo, expr: Term, end: PosInfo){
         this.begin = begin;
         this.expr = expr;
@@ -361,11 +361,11 @@ export class Expr {
     }
 }
 export class Term {
-    public kind: ASTKinds.Term = ASTKinds.Term;
-    public begin: PosInfo;
-    public expr: Term_$0;
-    public end: PosInfo;
-    public span: Span;
+    kind: ASTKinds.Term = ASTKinds.Term;
+    begin: PosInfo;
+    expr: Term_$0;
+    end: PosInfo;
+    span: Span;
     constructor(begin: PosInfo, expr: Term_$0, end: PosInfo){
         this.begin = begin;
         this.expr = expr;
@@ -391,11 +391,11 @@ export type Term_$0_$0_$0 = Term_$0_$0_$0_1 | Term_$0_$0_$0_2;
 export type Term_$0_$0_$0_1 = string;
 export type Term_$0_$0_$0_2 = string;
 export class Factor {
-    public kind: ASTKinds.Factor = ASTKinds.Factor;
-    public begin: PosInfo;
-    public expr: Factor_$0;
-    public end: PosInfo;
-    public span: Span;
+    kind: ASTKinds.Factor = ASTKinds.Factor;
+    begin: PosInfo;
+    expr: Factor_$0;
+    end: PosInfo;
+    span: Span;
     constructor(begin: PosInfo, expr: Factor_$0, end: PosInfo){
         this.begin = begin;
         this.expr = expr;
@@ -421,12 +421,12 @@ export type Factor_$0_$0_$0 = Factor_$0_$0_$0_1 | Factor_$0_$0_$0_2;
 export type Factor_$0_$0_$0_1 = string;
 export type Factor_$0_$0_$0_2 = string;
 export class Call {
-    public kind: ASTKinds.Call = ASTKinds.Call;
-    public begin: PosInfo;
-    public expr: Unary;
-    public tail: Call_$0[];
-    public end: PosInfo;
-    public span: Span;
+    kind: ASTKinds.Call = ASTKinds.Call;
+    begin: PosInfo;
+    expr: Unary;
+    tail: Call_$0[];
+    end: PosInfo;
+    span: Span;
     constructor(begin: PosInfo, expr: Unary, tail: Call_$0[], end: PosInfo){
         this.begin = begin;
         this.expr = expr;
@@ -460,12 +460,12 @@ export interface CallParen_$0 {
     expr: Expr;
 }
 export class Unary {
-    public kind: ASTKinds.Unary = ASTKinds.Unary;
-    public begin: PosInfo;
-    public op: Unary_$0[];
-    public expr: Binary;
-    public end: PosInfo;
-    public span: Span;
+    kind: ASTKinds.Unary = ASTKinds.Unary;
+    begin: PosInfo;
+    op: Unary_$0[];
+    expr: Binary;
+    end: PosInfo;
+    span: Span;
     constructor(begin: PosInfo, op: Unary_$0[], expr: Binary, end: PosInfo){
         this.begin = begin;
         this.op = op;
@@ -486,11 +486,11 @@ export interface Unary_$0_3 {
     kind: ASTKinds.Unary_$0_3;
 }
 export class Binary {
-    public kind: ASTKinds.Binary = ASTKinds.Binary;
-    public begin: PosInfo;
-    public expr: Binary_$0;
-    public end: PosInfo;
-    public span: Span;
+    kind: ASTKinds.Binary = ASTKinds.Binary;
+    begin: PosInfo;
+    expr: Binary_$0;
+    end: PosInfo;
+    span: Span;
     constructor(begin: PosInfo, expr: Binary_$0, end: PosInfo){
         this.begin = begin;
         this.expr = expr;
@@ -519,10 +519,10 @@ export interface Binary_$0_$0 {
     bin: Expr;
 }
 export class Placeholder {
-    public kind: ASTKinds.Placeholder = ASTKinds.Placeholder;
-    public begin: PosInfo;
-    public end: PosInfo;
-    public span: Span;
+    kind: ASTKinds.Placeholder = ASTKinds.Placeholder;
+    begin: PosInfo;
+    end: PosInfo;
+    span: Span;
     constructor(begin: PosInfo, end: PosInfo){
         this.begin = begin;
         this.end = end;
@@ -532,10 +532,10 @@ export class Placeholder {
     }
 }
 export class Ignore {
-    public kind: ASTKinds.Ignore = ASTKinds.Ignore;
-    public begin: PosInfo;
-    public end: PosInfo;
-    public span: Span;
+    kind: ASTKinds.Ignore = ASTKinds.Ignore;
+    begin: PosInfo;
+    end: PosInfo;
+    span: Span;
     constructor(begin: PosInfo, end: PosInfo){
         this.begin = begin;
         this.end = end;
@@ -545,12 +545,12 @@ export class Ignore {
     }
 }
 export class Num {
-    public kind: ASTKinds.Num = ASTKinds.Num;
-    public begin: PosInfo;
-    public num_str: string;
-    public end: PosInfo;
-    public span: Span;
-    public num: number;
+    kind: ASTKinds.Num = ASTKinds.Num;
+    begin: PosInfo;
+    num_str: string;
+    end: PosInfo;
+    span: Span;
+    num: number;
     constructor(begin: PosInfo, num_str: string, end: PosInfo){
         this.begin = begin;
         this.num_str = num_str;
@@ -572,27 +572,27 @@ export class Parser {
         this.pos = {overallPos: 0, line: 1, offset: 0};
         this.input = input;
     }
-    public reset(pos: PosInfo) {
+    reset(pos: PosInfo) {
         this.pos = pos;
     }
-    public finished(): boolean {
+    finished(): boolean {
         return this.pos.overallPos === this.input.length;
     }
-    public clearMemos(): void {
+    clearMemos(): void {
     }
-    public matchFile($$dpth: number, $$cr?: ErrorTracker): Nullable<File> {
+    matchFile($$dpth: number, $$cr?: ErrorTracker): Nullable<File> {
         return this.choice<File>([
             () => this.matchFile_1($$dpth + 1, $$cr),
             () => this.matchFile_2($$dpth + 1, $$cr),
         ]);
     }
-    public matchFile_1($$dpth: number, $$cr?: ErrorTracker): Nullable<File_1> {
+    matchFile_1($$dpth: number, $$cr?: ErrorTracker): Nullable<File_1> {
         return this.matchFile_$0($$dpth + 1, $$cr);
     }
-    public matchFile_2($$dpth: number, $$cr?: ErrorTracker): Nullable<File_2> {
+    matchFile_2($$dpth: number, $$cr?: ErrorTracker): Nullable<File_2> {
         return this.matchFile_$1($$dpth + 1, $$cr);
     }
-    public matchFile_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<File_$0> {
+    matchFile_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<File_$0> {
         return this.run<File_$0>($$dpth,
             () => {
                 let $scope$body: Nullable<Defition[]>;
@@ -606,7 +606,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchFile_$1($$dpth: number, $$cr?: ErrorTracker): Nullable<File_$1> {
+    matchFile_$1($$dpth: number, $$cr?: ErrorTracker): Nullable<File_$1> {
         return this.run<File_$1>($$dpth,
             () => {
                 let $scope$body: Nullable<Expr>;
@@ -620,19 +620,19 @@ export class Parser {
                 return $$res;
             });
     }
-    public match_($$dpth: number, $$cr?: ErrorTracker): Nullable<_> {
+    match_($$dpth: number, $$cr?: ErrorTracker): Nullable<_> {
         return this.regexAccept(String.raw`(?:\s*)`, $$dpth + 1, $$cr);
     }
-    public matchIdentPart($$dpth: number, $$cr?: ErrorTracker): Nullable<IdentPart> {
+    matchIdentPart($$dpth: number, $$cr?: ErrorTracker): Nullable<IdentPart> {
         return this.choice<IdentPart>([
             () => this.matchIdentPart_1($$dpth + 1, $$cr),
             () => this.matchIdentPart_2($$dpth + 1, $$cr),
         ]);
     }
-    public matchIdentPart_1($$dpth: number, $$cr?: ErrorTracker): Nullable<IdentPart_1> {
+    matchIdentPart_1($$dpth: number, $$cr?: ErrorTracker): Nullable<IdentPart_1> {
         return this.matchIdentPart_$0($$dpth + 1, $$cr);
     }
-    public matchIdentPart_2($$dpth: number, $$cr?: ErrorTracker): Nullable<IdentPart_2> {
+    matchIdentPart_2($$dpth: number, $$cr?: ErrorTracker): Nullable<IdentPart_2> {
         return this.run<IdentPart_2>($$dpth,
             () => {
                 let $scope$str: Nullable<string>;
@@ -645,7 +645,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchIdentPart_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<IdentPart_$0> {
+    matchIdentPart_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<IdentPart_$0> {
         return this.run<IdentPart_$0>($$dpth,
             () => {
                 let $scope$raw: Nullable<_IdentRaw>;
@@ -659,16 +659,16 @@ export class Parser {
                 return $$res;
             });
     }
-    public match_IdentRaw($$dpth: number, $$cr?: ErrorTracker): Nullable<_IdentRaw> {
+    match_IdentRaw($$dpth: number, $$cr?: ErrorTracker): Nullable<_IdentRaw> {
         return this.match_IdentRaw_$0($$dpth + 1, $$cr);
     }
-    public match_IdentRaw_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<_IdentRaw_$0> {
+    match_IdentRaw_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<_IdentRaw_$0> {
         return this.choice<_IdentRaw_$0>([
             () => this.match_IdentRaw_$0_1($$dpth + 1, $$cr),
             () => this.match_IdentRaw_$0_2($$dpth + 1, $$cr),
         ]);
     }
-    public match_IdentRaw_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<_IdentRaw_$0_1> {
+    match_IdentRaw_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<_IdentRaw_$0_1> {
         return this.run<_IdentRaw_$0_1>($$dpth,
             () => {
                 let $scope$str: Nullable<string>;
@@ -681,10 +681,10 @@ export class Parser {
                 return $$res;
             });
     }
-    public match_IdentRaw_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<_IdentRaw_$0_2> {
+    match_IdentRaw_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<_IdentRaw_$0_2> {
         return this.match_IdentRaw_$0_$0($$dpth + 1, $$cr);
     }
-    public match_IdentRaw_$0_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<_IdentRaw_$0_$0> {
+    match_IdentRaw_$0_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<_IdentRaw_$0_$0> {
         return this.run<_IdentRaw_$0_$0>($$dpth,
             () => {
                 let $scope$raw: Nullable<string>;
@@ -699,7 +699,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchIdent($$dpth: number, $$cr?: ErrorTracker): Nullable<Ident> {
+    matchIdent($$dpth: number, $$cr?: ErrorTracker): Nullable<Ident> {
         return this.run<Ident>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -718,7 +718,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchIdent_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Ident_$0> {
+    matchIdent_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Ident_$0> {
         return this.run<Ident_$0>($$dpth,
             () => {
                 let $scope$part: Nullable<IdentPart>;
@@ -732,7 +732,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchTypedIdent($$dpth: number, $$cr?: ErrorTracker): Nullable<TypedIdent> {
+    matchTypedIdent($$dpth: number, $$cr?: ErrorTracker): Nullable<TypedIdent> {
         return this.run<TypedIdent>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -749,7 +749,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchTypedIdent_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<TypedIdent_$0> {
+    matchTypedIdent_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<TypedIdent_$0> {
         return this.run<TypedIdent_$0>($$dpth,
             () => {
                 let $$res: Nullable<TypedIdent_$0> = null;
@@ -764,7 +764,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchUnit($$dpth: number, $$cr?: ErrorTracker): Nullable<Unit> {
+    matchUnit($$dpth: number, $$cr?: ErrorTracker): Nullable<Unit> {
         return this.run<Unit>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -780,13 +780,13 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchType($$dpth: number, $$cr?: ErrorTracker): Nullable<Type> {
+    matchType($$dpth: number, $$cr?: ErrorTracker): Nullable<Type> {
         return this.choice<Type>([
             () => this.matchType_1($$dpth + 1, $$cr),
             () => this.matchType_2($$dpth + 1, $$cr),
         ]);
     }
-    public matchType_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Type_1> {
+    matchType_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Type_1> {
         return this.run<Type_1>($$dpth,
             () => {
                 let $scope$ty: Nullable<Unit>;
@@ -799,7 +799,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchType_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Type_2> {
+    matchType_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Type_2> {
         return this.run<Type_2>($$dpth,
             () => {
                 let $scope$ty: Nullable<Placeholder>;
@@ -812,7 +812,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchAttribute($$dpth: number, $$cr?: ErrorTracker): Nullable<Attribute> {
+    matchAttribute($$dpth: number, $$cr?: ErrorTracker): Nullable<Attribute> {
         return this.run<Attribute>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -831,7 +831,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchDefition($$dpth: number, $$cr?: ErrorTracker): Nullable<Defition> {
+    matchDefition($$dpth: number, $$cr?: ErrorTracker): Nullable<Defition> {
         return this.run<Defition>($$dpth,
             () => {
                 let $scope$attrs: Nullable<Defition_$0[]>;
@@ -869,7 +869,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchDefition_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Defition_$0> {
+    matchDefition_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Defition_$0> {
         return this.run<Defition_$0>($$dpth,
             () => {
                 let $$res: Nullable<Defition_$0> = null;
@@ -882,7 +882,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchDefition_$1($$dpth: number, $$cr?: ErrorTracker): Nullable<Defition_$1> {
+    matchDefition_$1($$dpth: number, $$cr?: ErrorTracker): Nullable<Defition_$1> {
         return this.run<Defition_$1>($$dpth,
             () => {
                 let $scope$arg: Nullable<TypedIdent>;
@@ -898,7 +898,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchDefition_$2($$dpth: number, $$cr?: ErrorTracker): Nullable<Defition_$2> {
+    matchDefition_$2($$dpth: number, $$cr?: ErrorTracker): Nullable<Defition_$2> {
         return this.run<Defition_$2>($$dpth,
             () => {
                 let $scope$ty: Nullable<Type>;
@@ -914,7 +914,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchBlock($$dpth: number, $$cr?: ErrorTracker): Nullable<Block> {
+    matchBlock($$dpth: number, $$cr?: ErrorTracker): Nullable<Block> {
         return this.run<Block>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -933,7 +933,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchBlock_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Block_$0> {
+    matchBlock_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Block_$0> {
         return this.run<Block_$0>($$dpth,
             () => {
                 let $scope$stmt: Nullable<Stmt>;
@@ -949,7 +949,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchReturnStmt($$dpth: number, $$cr?: ErrorTracker): Nullable<ReturnStmt> {
+    matchReturnStmt($$dpth: number, $$cr?: ErrorTracker): Nullable<ReturnStmt> {
         return this.run<ReturnStmt>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -968,13 +968,13 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchStmt($$dpth: number, $$cr?: ErrorTracker): Nullable<Stmt> {
+    matchStmt($$dpth: number, $$cr?: ErrorTracker): Nullable<Stmt> {
         return this.choice<Stmt>([
             () => this.matchStmt_1($$dpth + 1, $$cr),
             () => this.matchStmt_2($$dpth + 1, $$cr),
         ]);
     }
-    public matchStmt_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Stmt_1> {
+    matchStmt_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Stmt_1> {
         return this.run<Stmt_1>($$dpth,
             () => {
                 let $scope$stmt: Nullable<ReturnStmt>;
@@ -987,7 +987,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchStmt_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Stmt_2> {
+    matchStmt_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Stmt_2> {
         return this.run<Stmt_2>($$dpth,
             () => {
                 let $scope$stmt: Nullable<Expr>;
@@ -1000,7 +1000,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchExpr($$dpth: number, $$cr?: ErrorTracker): Nullable<Expr> {
+    matchExpr($$dpth: number, $$cr?: ErrorTracker): Nullable<Expr> {
         return this.run<Expr>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -1017,7 +1017,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchTerm($$dpth: number, $$cr?: ErrorTracker): Nullable<Term> {
+    matchTerm($$dpth: number, $$cr?: ErrorTracker): Nullable<Term> {
         return this.run<Term>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -1034,16 +1034,16 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchTerm_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0> {
+    matchTerm_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0> {
         return this.choice<Term_$0>([
             () => this.matchTerm_$0_1($$dpth + 1, $$cr),
             () => this.matchTerm_$0_2($$dpth + 1, $$cr),
         ]);
     }
-    public matchTerm_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0_1> {
+    matchTerm_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0_1> {
         return this.matchTerm_$0_$0($$dpth + 1, $$cr);
     }
-    public matchTerm_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0_2> {
+    matchTerm_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0_2> {
         return this.run<Term_$0_2>($$dpth,
             () => {
                 let $scope$expr: Nullable<Factor>;
@@ -1056,7 +1056,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchTerm_$0_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0_$0> {
+    matchTerm_$0_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0_$0> {
         return this.run<Term_$0_$0>($$dpth,
             () => {
                 let $scope$expr: Nullable<Factor>;
@@ -1075,19 +1075,19 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchTerm_$0_$0_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0_$0_$0> {
+    matchTerm_$0_$0_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0_$0_$0> {
         return this.choice<Term_$0_$0_$0>([
             () => this.matchTerm_$0_$0_$0_1($$dpth + 1, $$cr),
             () => this.matchTerm_$0_$0_$0_2($$dpth + 1, $$cr),
         ]);
     }
-    public matchTerm_$0_$0_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0_$0_$0_1> {
+    matchTerm_$0_$0_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0_$0_$0_1> {
         return this.regexAccept(String.raw`(?:\*)`, $$dpth + 1, $$cr);
     }
-    public matchTerm_$0_$0_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0_$0_$0_2> {
+    matchTerm_$0_$0_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Term_$0_$0_$0_2> {
         return this.regexAccept(String.raw`(?:\/)`, $$dpth + 1, $$cr);
     }
-    public matchFactor($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor> {
+    matchFactor($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor> {
         return this.run<Factor>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -1104,16 +1104,16 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchFactor_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0> {
+    matchFactor_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0> {
         return this.choice<Factor_$0>([
             () => this.matchFactor_$0_1($$dpth + 1, $$cr),
             () => this.matchFactor_$0_2($$dpth + 1, $$cr),
         ]);
     }
-    public matchFactor_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0_1> {
+    matchFactor_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0_1> {
         return this.matchFactor_$0_$0($$dpth + 1, $$cr);
     }
-    public matchFactor_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0_2> {
+    matchFactor_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0_2> {
         return this.run<Factor_$0_2>($$dpth,
             () => {
                 let $scope$expr: Nullable<Call>;
@@ -1126,7 +1126,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchFactor_$0_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0_$0> {
+    matchFactor_$0_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0_$0> {
         return this.run<Factor_$0_$0>($$dpth,
             () => {
                 let $scope$expr: Nullable<Call>;
@@ -1145,19 +1145,19 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchFactor_$0_$0_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0_$0_$0> {
+    matchFactor_$0_$0_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0_$0_$0> {
         return this.choice<Factor_$0_$0_$0>([
             () => this.matchFactor_$0_$0_$0_1($$dpth + 1, $$cr),
             () => this.matchFactor_$0_$0_$0_2($$dpth + 1, $$cr),
         ]);
     }
-    public matchFactor_$0_$0_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0_$0_$0_1> {
+    matchFactor_$0_$0_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0_$0_$0_1> {
         return this.regexAccept(String.raw`(?:\+)`, $$dpth + 1, $$cr);
     }
-    public matchFactor_$0_$0_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0_$0_$0_2> {
+    matchFactor_$0_$0_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Factor_$0_$0_$0_2> {
         return this.regexAccept(String.raw`(?:\-)`, $$dpth + 1, $$cr);
     }
-    public matchCall($$dpth: number, $$cr?: ErrorTracker): Nullable<Call> {
+    matchCall($$dpth: number, $$cr?: ErrorTracker): Nullable<Call> {
         return this.run<Call>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -1176,13 +1176,13 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchCall_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Call_$0> {
+    matchCall_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Call_$0> {
         return this.choice<Call_$0>([
             () => this.matchCall_$0_1($$dpth + 1, $$cr),
             () => this.matchCall_$0_2($$dpth + 1, $$cr),
         ]);
     }
-    public matchCall_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Call_$0_1> {
+    matchCall_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Call_$0_1> {
         return this.run<Call_$0_1>($$dpth,
             () => {
                 let $scope$expr: Nullable<Dot>;
@@ -1196,7 +1196,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchCall_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Call_$0_2> {
+    matchCall_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Call_$0_2> {
         return this.run<Call_$0_2>($$dpth,
             () => {
                 let $scope$expr: Nullable<CallParen>;
@@ -1209,7 +1209,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchDot($$dpth: number, $$cr?: ErrorTracker): Nullable<Dot> {
+    matchDot($$dpth: number, $$cr?: ErrorTracker): Nullable<Dot> {
         return this.run<Dot>($$dpth,
             () => {
                 let $scope$expr: Nullable<Unary>;
@@ -1224,7 +1224,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchCallParen($$dpth: number, $$cr?: ErrorTracker): Nullable<CallParen> {
+    matchCallParen($$dpth: number, $$cr?: ErrorTracker): Nullable<CallParen> {
         return this.run<CallParen>($$dpth,
             () => {
                 let $scope$first: Nullable<Nullable<Expr>>;
@@ -1245,7 +1245,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchCallParen_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<CallParen_$0> {
+    matchCallParen_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<CallParen_$0> {
         return this.run<CallParen_$0>($$dpth,
             () => {
                 let $scope$expr: Nullable<Expr>;
@@ -1261,7 +1261,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchUnary($$dpth: number, $$cr?: ErrorTracker): Nullable<Unary> {
+    matchUnary($$dpth: number, $$cr?: ErrorTracker): Nullable<Unary> {
         return this.run<Unary>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -1280,14 +1280,14 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchUnary_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Unary_$0> {
+    matchUnary_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Unary_$0> {
         return this.choice<Unary_$0>([
             () => this.matchUnary_$0_1($$dpth + 1, $$cr),
             () => this.matchUnary_$0_2($$dpth + 1, $$cr),
             () => this.matchUnary_$0_3($$dpth + 1, $$cr),
         ]);
     }
-    public matchUnary_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Unary_$0_1> {
+    matchUnary_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Unary_$0_1> {
         return this.run<Unary_$0_1>($$dpth,
             () => {
                 let $scope$prefix: Nullable<string>;
@@ -1300,10 +1300,10 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchUnary_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Unary_$0_2> {
+    matchUnary_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Unary_$0_2> {
         return this.regexAccept(String.raw`(?:\-)`, $$dpth + 1, $$cr);
     }
-    public matchUnary_$0_3($$dpth: number, $$cr?: ErrorTracker): Nullable<Unary_$0_3> {
+    matchUnary_$0_3($$dpth: number, $$cr?: ErrorTracker): Nullable<Unary_$0_3> {
         return this.run<Unary_$0_3>($$dpth,
             () => {
                 let $$res: Nullable<Unary_$0_3> = null;
@@ -1316,7 +1316,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchBinary($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary> {
+    matchBinary($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary> {
         return this.run<Binary>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -1333,7 +1333,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchBinary_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary_$0> {
+    matchBinary_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary_$0> {
         return this.choice<Binary_$0>([
             () => this.matchBinary_$0_1($$dpth + 1, $$cr),
             () => this.matchBinary_$0_2($$dpth + 1, $$cr),
@@ -1341,7 +1341,7 @@ export class Parser {
             () => this.matchBinary_$0_4($$dpth + 1, $$cr),
         ]);
     }
-    public matchBinary_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary_$0_1> {
+    matchBinary_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary_$0_1> {
         return this.run<Binary_$0_1>($$dpth,
             () => {
                 let $scope$bin: Nullable<Num>;
@@ -1354,7 +1354,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchBinary_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary_$0_2> {
+    matchBinary_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary_$0_2> {
         return this.run<Binary_$0_2>($$dpth,
             () => {
                 let $scope$bin: Nullable<Ident>;
@@ -1367,7 +1367,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchBinary_$0_3($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary_$0_3> {
+    matchBinary_$0_3($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary_$0_3> {
         return this.run<Binary_$0_3>($$dpth,
             () => {
                 let $scope$bin: Nullable<Placeholder>;
@@ -1380,10 +1380,10 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchBinary_$0_4($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary_$0_4> {
+    matchBinary_$0_4($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary_$0_4> {
         return this.matchBinary_$0_$0($$dpth + 1, $$cr);
     }
-    public matchBinary_$0_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary_$0_$0> {
+    matchBinary_$0_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<Binary_$0_$0> {
         return this.run<Binary_$0_$0>($$dpth,
             () => {
                 let $scope$bin: Nullable<Expr>;
@@ -1400,7 +1400,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchPlaceholder($$dpth: number, $$cr?: ErrorTracker): Nullable<Placeholder> {
+    matchPlaceholder($$dpth: number, $$cr?: ErrorTracker): Nullable<Placeholder> {
         return this.run<Placeholder>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -1416,7 +1416,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchIgnore($$dpth: number, $$cr?: ErrorTracker): Nullable<Ignore> {
+    matchIgnore($$dpth: number, $$cr?: ErrorTracker): Nullable<Ignore> {
         return this.run<Ignore>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -1432,7 +1432,7 @@ export class Parser {
                 return $$res;
             });
     }
-    public matchNum($$dpth: number, $$cr?: ErrorTracker): Nullable<Num> {
+    matchNum($$dpth: number, $$cr?: ErrorTracker): Nullable<Num> {
         return this.run<Num>($$dpth,
             () => {
                 let $scope$begin: Nullable<PosInfo>;
@@ -1449,14 +1449,14 @@ export class Parser {
                 return $$res;
             });
     }
-    public test(): boolean {
+    test(): boolean {
         const mrk = this.mark();
         const res = this.matchFile(0);
         const ans = res !== null;
         this.reset(mrk);
         return ans;
     }
-    public parse(): ParseResult {
+    parse(): ParseResult {
         const mrk = this.mark();
         const res = this.matchFile(0);
         if (res)
@@ -1468,7 +1468,7 @@ export class Parser {
         const err = rec.getErr()
         return {ast: res, errs: err !== null ? [err] : []}
     }
-    public mark(): PosInfo {
+    mark(): PosInfo {
         return this.pos;
     }
     private loop<T>(func: $$RuleType<T>, star: boolean = false): Nullable<T[]> {
@@ -1598,13 +1598,13 @@ export interface RegexMatch {
 export type EOFMatch = { kind: "EOF"; negated: boolean };
 export type MatchAttempt = RegexMatch | EOFMatch;
 export class SyntaxErr {
-    public pos: PosInfo;
-    public expmatches: MatchAttempt[];
+    pos: PosInfo;
+    expmatches: MatchAttempt[];
     constructor(pos: PosInfo, expmatches: MatchAttempt[]) {
         this.pos = pos;
         this.expmatches = [...expmatches];
     }
-    public toString(): string {
+    toString(): string {
         return `Syntax Error at line ${this.pos.line}:${this.pos.offset}. Expected one of ${this.expmatches.map(x => x.kind === "EOF" ? " EOF" : ` ${x.negated ? 'not ': ''}'${x.literal}'`)}`;
     }
 }
@@ -1612,7 +1612,7 @@ class ErrorTracker {
     private mxpos: PosInfo = {overallPos: -1, line: -1, offset: -1};
     private regexset: Set<string> = new Set();
     private pmatches: MatchAttempt[] = [];
-    public record(pos: PosInfo, result: any, att: MatchAttempt) {
+    record(pos: PosInfo, result: any, att: MatchAttempt) {
         if ((result === null) === att.negated)
             return;
         if (pos.overallPos > this.mxpos.overallPos) {
@@ -1630,7 +1630,7 @@ class ErrorTracker {
             }
         }
     }
-    public getErr(): SyntaxErr | null {
+    getErr(): SyntaxErr | null {
         if (this.mxpos.overallPos !== -1)
             return new SyntaxErr(this.mxpos, this.pmatches);
         return null;

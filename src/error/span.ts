@@ -5,10 +5,10 @@ const to_span = (pos: PosInfo): Span => {
 }
 
 class Span {
-    public start: PosInfo
-    public end: PosInfo
+    start: PosInfo
+    end: PosInfo
 
-    public constructor (start: PosInfo, end: PosInfo) {
+    constructor (start: PosInfo, end: PosInfo) {
         this.start = start
         this.end = end
     }

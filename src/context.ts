@@ -1,9 +1,9 @@
 import { Lines, to_lines } from "./error/error.ts";
 
 class YakContext {
-    public code: string
-    public lines: Lines
-    public file: string
+    code: string
+    lines: Lines
+    file: string
 
     constructor (raw: string, file: string) {
         this.code = raw

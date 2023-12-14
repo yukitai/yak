@@ -1,4 +1,6 @@
 import { Span } from "../src/error/span.ts";
+import { AST } from "./ast.ts";
+import { Formatter } from "./formatter.ts";
 
 enum TokenType {
     Ident = "ident",
@@ -20,6 +22,7 @@ enum TokenType {
     Semi    = "semi",
     Or      = "or",
     At      = "symbol at",
+    Nothing = "nothing",
 
     OAssign   = "operator assign",
     OAdd      = "operator +",
@@ -38,27 +41,50 @@ enum TokenType {
     OGe       = "operator >=",
     OLt       = "operator <",
     OGt       = "operator >",
+    ODot      = "operator .",
 
+    KUse     = "keyword use",
     KDef     = "keyword def",
     KReturn  = "keyword return",
     KStruct  = "keyword struct",
     KUnsized = "keyword unsized",
+    KIf      = "keyword if",
+    KElif    = "keyword elif",
+    KElse    = "keyword else",
+    KWhile   = "keyword while",
+    KFor     = "keyword for",
+    KIn      = "keyword in",
     
-    TUnit = "type unit",
+    /* TUnit = "type unit",
     TList = "type list",
+    TNum  = "type num",
+    TStr  = "type str",
+    TBool = "type bool", */
+    BuiltinType = "builtin type",
 
     NlIndent = "indent",
 
     Eof = "end of file"
 }
 
-interface Token {
-    ty: TokenType,
-    value: string | number,
-    span: Span,
+class Token extends AST {
+    ty: TokenType
+    value: string | number
+    span: Span
+
+    constructor (ty: TokenType, value: string | number, span: Span) {
+        super()
+        this.ty = ty
+        this.value = value
+        this.span = span
+    }
+
+    display (fmt: Formatter) {
+        fmt.write_kv("Token", this.value as string)
+    }
 }
 
 export {
-    type Token,
+    Token,
     TokenType,
 }

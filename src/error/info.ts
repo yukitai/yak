@@ -7,11 +7,11 @@ import { Span } from "./span.ts";
 class Info {
     msg: ToStringable
 
-    public constructor (msg: ToStringable) {
+    constructor (msg: ToStringable) {
         this.msg = msg
     }
 
-    public toString (): string {
+    toString (): string {
         return `${LIGHT}${BOLD}info${CLEAR}: ${this.msg}`
     }
 }
@@ -23,7 +23,7 @@ class ListInfo extends Info {
 
     static spliter = `${GRAY},${CLEAR}\n    `
 
-    public constructor (msg: ToStringable, list: ToStringable[], overflow: number = 6) {
+    constructor (msg: ToStringable, list: ToStringable[], overflow: number = 6) {
         super(`${msg}
     ${list.length > overflow ?
         list.slice(0, overflow).map(item => `${BOLD}${item}${CLEAR}`).join(ListInfo.spliter)
@@ -33,7 +33,7 @@ class ListInfo extends Info {
 }
 
 class PreviewInfo extends Info {
-    public constructor (msg: ToStringable, span: Span, context: YakContext) {
+    constructor (msg: ToStringable, span: Span, context: YakContext) {
         const code_preview = render_preview(span.start, span.end, context.lines)
         
         super(`${msg}
