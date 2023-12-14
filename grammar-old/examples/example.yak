@@ -1,6 +1,0 @@
-def Fact(x: unit) -> unit:
-    1 if x == 0 else x * Fact(x - 1)
-
-@whengreenflagclicked
-def main():
-    debug.log("fact10", Fact(10))

@@ -253,17 +253,17 @@ class Lexer {
             this.move()
             if (this.peek() === "/") {
                 this.move()
-                ty = TokenType.ODiv
+                ty = TokenType.OFloorDiv
                 value = "//"
             } else {
-                ty = TokenType.OFloorDiv
+                ty = TokenType.ODiv
                 value = "/"
             }
             end = this.get_pos_info()
         } else if (ch === "%") {
             this.move()
             ty = TokenType.OMod
-            value = "+"
+            value = "%"
             end = this.get_pos_info()
         } else if (this.peek(2) === "&&") {
             this.move(2)
@@ -316,7 +316,7 @@ class Lexer {
             end = this.get_pos_info()
         } else if (ch === ">") {
             this.move()
-            if (this.peek() === ">") {
+            if (this.peek() === "=") {
                 this.move()
                 ty = TokenType.OGe
                 value = ">="

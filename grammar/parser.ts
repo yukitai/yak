@@ -397,8 +397,10 @@ class Parser {
         const colon = this.assert_next_error(TokenType.Colon)
         const body = this.parse_block()
         const elif_cases = []
+        this.move()
         while (this.peek().ty === TokenType.KElif) {
             elif_cases.push(this.parse_elif_case())
+            this.move()
         }
         let else_case: ElseCase | undefined
         if (this.peek().ty === TokenType.KElse) {
@@ -469,17 +471,35 @@ class Parser {
     }
 
     parse_expr_and (): Expr {
-        let expr = this.parse_expr_compare()
+        let expr = this.parse_expr_not()
         while (true) {
             const op = this.peek()
             if (op.ty === TokenType.OAnd) {
                 this.move()
-                const rhs = this.parse_expr_compare()
+                const rhs = this.parse_expr_not()
                 expr = new ExprD(expr, op, rhs)
             } else {
                 break
             }
         }
+        return expr
+    }
+
+    parse_expr_not (): Expr {
+        const ops = []
+        while (true) {
+            const op = this.peek()
+            if (op.ty === TokenType.ONot) {
+                this.move()
+                ops.push(op)
+            } else {
+                break
+            }
+        }
+        let expr = this.parse_expr_compare()
+        ops.toReversed().forEach(op => {
+            expr = new ExprS(op, expr)
+        })
         return expr
     }
 
@@ -525,7 +545,8 @@ class Parser {
             const op = this.peek()
             if (op.ty === TokenType.OMul
              || op.ty === TokenType.ODiv
-             || op.ty === TokenType.OFloorDiv) {
+             || op.ty === TokenType.OFloorDiv
+             || op.ty === TokenType.OMod) {
                 this.move()
                 const rhs = this.parse_expr_pow()
                 expr = new ExprD(expr, op, rhs)
@@ -590,8 +611,7 @@ class Parser {
         while (true) {
             const op = this.peek()
             if (op.ty === TokenType.OAdd
-             || op.ty === TokenType.OSub
-             || op.ty === TokenType.ONot) {
+             || op.ty === TokenType.OSub) {
                 this.move()
                 ops.push(op)
             } else {
