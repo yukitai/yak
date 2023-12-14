@@ -40,7 +40,7 @@ const render_preview = (
 ): string => {
     let result = ""
     let line = Math.max(0, start.line - preview_lines)
-    let line_max = Math.min(src.length, end.line + preview_lines)
+    const line_max = Math.min(src.length, end.line + preview_lines)
     const align_max = line_max.toString().length
     const render_line = (clip: boolean): number => {
         let jump = 0
