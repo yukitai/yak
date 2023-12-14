@@ -4,28 +4,25 @@ import { Lines } from "./error.ts";
 import { Difference, render_diff } from "./preview.ts";
 
 class Help {
-    msg: ToStringable
+  msg: ToStringable;
 
-    constructor (msg: ToStringable) {
-        this.msg = msg
-    }
+  constructor(msg: ToStringable) {
+    this.msg = msg;
+  }
 
-    toString (): string {
-        return `${GREEN}${BOLD}help${CLEAR}: ${this.msg}`
-    }
+  toString(): string {
+    return `${GREEN}${BOLD}help${CLEAR}: ${this.msg}`;
+  }
 }
 
 class DifferenceHelp extends Help {
-    constructor (msg: ToStringable, src: Lines, difference: Difference) {
-        const difference_code = render_diff(src, difference)
+  constructor(msg: ToStringable, src: Lines, difference: Difference) {
+    const difference_code = render_diff(src, difference);
 
-        super(`${msg}
+    super(`${msg}
 
-${difference_code}`)
-    }
+${difference_code}`);
+  }
 }
 
-export {
-    Help,
-    DifferenceHelp,
-}
+export { DifferenceHelp, Help };
