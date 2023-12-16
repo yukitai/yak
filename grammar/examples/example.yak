@@ -1,2 +1,4 @@
-def main(name: str):
-    log("Hello,", name)
+def Max(x, y) -> num:
+    if x > y:
+        return x
+    return y

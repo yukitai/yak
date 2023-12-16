@@ -1,7 +1,14 @@
 {
-  "tasks": {
-    "cli": "deno run yak.ts",
-    "dev": "deno run --watch --allow-all yak_dev.ts",
-    "test": "deno test ./tests/*.ts"
-  }
+    "tasks": {
+        "cli": "deno run --allow-env ./yak.ts",
+        "dev": "deno run --watch --allow-all yak_dev.ts",
+        "test": "deno test ./tests/*.ts",
+        "check": "deno fmt -q --check && deno lint && deno test ./tests/*.ts"
+    },
+    "fmt": {
+        "lineWidth": 80,
+        "indentWidth": 4,
+        "semiColons": false,
+        "singleQuote": true
+    }
 }

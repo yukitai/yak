@@ -1,51 +1,69 @@
-import { YakContext } from "../context.ts";
-import { ToStringable } from "../utils.ts";
-import { BOLD, CLEAR, GRAY, ITALLIC, LIGHT } from "./colors.ts";
-import { render_preview } from "./preview.ts";
-import { Span } from "./span.ts";
+import { YakContext } from '../context.ts'
+import { ToStringable } from '../utils.ts'
+import { BOLD, CLEAR, GRAY, ITALLIC, LIGHT } from './colors.ts'
+import { render_preview } from './preview.ts'
+import { Span } from './span.ts'
 
 class Info {
-  msg: ToStringable;
+    msg: ToStringable
 
-  constructor(msg: ToStringable) {
-    this.msg = msg;
-  }
+    constructor(msg: ToStringable) {
+        this.msg = msg
+    }
 
-  toString(): string {
-    return `${LIGHT}${BOLD}info${CLEAR}: ${this.msg}`;
-  }
+    toString(): string {
+        return `${LIGHT}${BOLD}info${CLEAR}: ${this.msg}`
+    }
 }
 
 class ListInfo extends Info {
-  private static format_items(num: number): string {
-    return num === 1 ? `${num} item` : `${num} items`;
-  }
+    private static format_items(num: number): string {
+        return num === 1 ? `${num} item` : `${num} items`
+    }
 
-  static spliter = `${GRAY},${CLEAR}\n    `;
+    static spliter = `${GRAY},${CLEAR}\n    `
 
-  constructor(msg: ToStringable, list: ToStringable[], overflow: number = 6) {
-    super(`${msg}
+    constructor(
+        msg: ToStringable,
+        list: ToStringable[],
+        overflow: number = 6,
+    ) {
+        super(`${msg}
     ${
-      list.length > overflow
-        ? list.slice(0, overflow).map((item) => `${BOLD}${item}${CLEAR}`).join(
-          ListInfo.spliter,
-        ) +
-          `${ITALLIC} and ${
-            ListInfo.format_items(list.length - overflow)
-          } more ...${CLEAR}`
-        : list.map((item) => `${BOLD}${item}${CLEAR}`).join(ListInfo.spliter)
-    }`);
-  }
+            list.length > overflow
+                ? list.slice(0, overflow).map((item) =>
+                    `${BOLD}${item}${CLEAR}`
+                ).join(
+                    ListInfo.spliter,
+                ) +
+                    `${ITALLIC} and ${
+                        ListInfo.format_items(
+                            list.length - overflow,
+                        )
+                    } more ...${CLEAR}`
+                : list.map((item) => `${BOLD}${item}${CLEAR}`).join(
+                    ListInfo.spliter,
+                )
+        }`)
+    }
 }
 
 class PreviewInfo extends Info {
-  constructor(msg: ToStringable, span: Span, context: YakContext) {
-    const code_preview = render_preview(span.start, span.end, context.lines);
+    constructor(
+        msg: ToStringable,
+        span: Span,
+        context: YakContext,
+    ) {
+        const code_preview = render_preview(
+            span.start,
+            span.end,
+            context.lines,
+        )
 
-    super(`${msg}
+        super(`${msg}
 
-${code_preview}`);
-  }
+${code_preview}`)
+    }
 }
 
-export { Info, ListInfo, PreviewInfo };
+export { Info, ListInfo, PreviewInfo }
