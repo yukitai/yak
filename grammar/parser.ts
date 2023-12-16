@@ -899,7 +899,10 @@ class Parser {
                 return new Literal(token)
             case TokenType.Ident: {
                 this.move()
-                const generics = this.parse_if_generics_specify()
+                let generics: GenericsSpecify | undefined
+                if (this.assert_next(TokenType.DColon)) {
+                    generics = this.parse_if_generics_specify()
+                }
                 return new Ident(token, generics)
             }
             case TokenType.LParen:

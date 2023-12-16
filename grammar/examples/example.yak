@@ -1,4 +1,5 @@
-def Max(x, y) -> num:
-    if x > y:
-        return x
-    return y
+def Eq<T>(lhs: T, rhs: T) -> bool:
+    return lhs == rhs
+
+def Test(x: num, y: num) -> bool:
+    return Eq::<num>(x, y)

@@ -225,8 +225,14 @@ class Lexer {
             end = this.get_pos_info()
         } else if (ch === ':') {
             this.move()
-            ty = TokenType.Colon
-            value = ':'
+            if (this.peek() === ':') {
+                this.move()
+                ty = TokenType.DColon
+                value = '::'
+            } else {
+                ty = TokenType.Colon
+                value = ':'
+            }
             end = this.get_pos_info()
         } else if (ch === ',') {
             this.move()
@@ -397,14 +403,17 @@ class Lexer {
                 if (this.peek(2) === 'r#') {
                     this.move(2)
                     while (this.next() !== '#');
-                } else {
+                } else if (Lexer.is_start_of_ident(this.peek())) {
                     while (
                         Lexer.is_body_of_ident(this.peek())
                     ) {
                         this.move()
                     }
+                } else {
+                    this.move(-2)
+                    break
                 }
-                if (this.peek(2) !== '::') break
+                if (this.peek(2) !== '::') { break }
                 this.move(2)
             }
             end = this.get_pos_info()

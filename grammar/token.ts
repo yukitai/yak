@@ -18,6 +18,7 @@ enum TokenType {
 
     ThinArr = 'thin arrow',
     Colon = 'colon',
+    DColon = 'double colon',
     Comma = 'comma',
     Semi = 'semi',
     Or = 'or',

@@ -82,13 +82,12 @@ class TypeInfer {
         this.types[def.func_name.name.value as string] = func_t
         this.scopes.enter_scope()
         def.args.forEach((arg) => {
-            const arg_t = this.ufs.insert(
-                from_ast(arg.type, this.types),
-            )
+            const arg_t = from_ast(arg.type, this.types)
             this.scopes.set(
                 arg.ident.name.value as string,
-                arg_t,
+                this.ufs.insert(arg_t),
             )
+            arg.resolved_type = arg_t
         })
         const ret_t_ = this.ufs.insert(ret_t)
         this.scopes.set('$ret_t', ret_t_)

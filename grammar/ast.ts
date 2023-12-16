@@ -652,6 +652,7 @@ class TypedIdent extends AST {
     ident: Ident
     colon?: Token
     type: Type
+    resolved_type?: checker.Type
 
     constructor(ident: Ident, colon?: Token, type?: Type) {
         super()

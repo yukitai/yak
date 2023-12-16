@@ -81,7 +81,7 @@ if (parser.has_error()) {
             display_errors(parser.errors)
         } else {
             const transfer = new Transfer(checker)
-            
+
             const ir = transfer.generate_ir_file()
 
             ir.display(new Formatter())

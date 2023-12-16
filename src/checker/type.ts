@@ -9,6 +9,7 @@ import {
     MAGENTA,
     YELLOW,
 } from '../error/colors.ts'
+import { Offset } from '../scratch_ir/type_view.ts'
 import { unreachable } from '../utils.ts'
 
 type Type =
@@ -55,6 +56,7 @@ enum BuiltinTypeEnum {
 class BuiltinType {
     target?: ast.AST
     type: BuiltinTypeEnum
+    offset?: Offset
 
     constructor(type: BuiltinTypeEnum, target?: ast.AST) {
         this.type = type
@@ -113,19 +115,19 @@ class BuiltinType {
     short_name(): string {
         switch (this.type) {
             case BuiltinTypeEnum.Num:
-                return "n"
+                return 'n'
             case BuiltinTypeEnum.Str:
-                return "s"
+                return 's'
             case BuiltinTypeEnum.Bool:
-                return "b"
+                return 'b'
             case BuiltinTypeEnum.Unit:
-                return "u"
+                return 'u'
             case BuiltinTypeEnum.List:
-                return "l"
+                return 'l'
             case BuiltinTypeEnum.Nil:
-                return "0"
+                return '0'
             default:
-                return "U"
+                return 'U'
         }
     }
 }
@@ -134,6 +136,7 @@ class ArrayType {
     target?: ast.AST
     type: Type
     size: number
+    offset?: Offset
 
     constructor(
         type: Type,
@@ -198,6 +201,7 @@ class GenericType {
     target?: ast.AST
     type: Type
     generics: Type[]
+    offset?: Offset
 
     constructor(
         type: Type,
@@ -272,7 +276,9 @@ class GenericType {
     }
 
     short_name(): string {
-        return `g${this.type.short_name()}_${this.generics.map(x => x.toString()).join("_")}G`
+        return `g${this.type.short_name()}_${
+            this.generics.map((x) => x.short_name()).join('_')
+        }G`
     }
 }
 
@@ -280,6 +286,7 @@ class TypeWithGenerics {
     target?: ast.AST
     type: Type
     generics: ast.Ident[]
+    offset?: Offset
 
     constructor(
         type: Type,
@@ -324,13 +331,16 @@ class TypeWithGenerics {
     }
 
     short_name(): string {
-        return `g${this.type.short_name()}_${this.generics.map(x => x.toString()).join("_")}G`
+        return `g${this.type.short_name()}_${
+            this.generics.map((x) => x.name.value).join('_')
+        }G`
     }
 }
 
 class UnsizedType {
     target?: ast.AST
     type: Type
+    offset?: Offset
 
     constructor(type: Type, target?: ast.AST) {
         this.type = type
@@ -382,6 +392,7 @@ class FuncType {
     target?: ast.AST
     args: Type[]
     ret_t: Type
+    offset?: Offset
 
     constructor(
         args: Type[],
@@ -423,7 +434,7 @@ class FuncType {
         }
         let type_matched = this.ret_t.i_say_you_are(ty.ret_t)
         this.args.forEach((type, i) => {
-            type_matched &&= type.i_say_you_are((ty as FuncType).args[i])
+            type_matched = type.i_say_you_are((ty as FuncType).args[i]) && type_matched
         })
         if (this.target instanceof ast.InferType) {
             this.target.infer_result = ty
@@ -444,7 +455,9 @@ class FuncType {
     }
 
     short_name(): string {
-        return `f${this.args.map(x => x.short_name()).join("_")}_${this.ret_t.short_name()}F`
+        return `f${
+            this.args.map((x) => x.short_name()).join('_')
+        }_${this.ret_t.short_name()}F`
     }
 }
 
@@ -453,6 +466,7 @@ type RecordFields = { [key: string]: Type }
 class RecordType {
     target?: ast.AST
     fields: RecordFields
+    offset?: Offset
 
     constructor(fields: RecordFields, target?: ast.AST) {
         this.target = target
@@ -507,13 +521,18 @@ class RecordType {
     }
 
     short_name(): string {
-        return `r${Object.entries(this.fields).map(([k, v]) => `${k}_${v.short_name()}`).join("_")}R`
+        return `r${
+            Object.entries(this.fields).map(([k, v]) =>
+                `${k}_${v.short_name()}`
+            ).join('_')
+        }R`
     }
 }
 
 class InferType {
     target?: ast.AST
     real?: Type
+    offset?: Offset
 
     constructor(target?: ast.AST) {
         this.target = target
@@ -573,7 +592,7 @@ class InferType {
     }
 
     short_name(): string {
-        return this.real?.short_name() ?? "U"
+        return this.real?.short_name() ?? 'U'
     }
 }
 
