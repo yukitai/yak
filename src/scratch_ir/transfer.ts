@@ -153,15 +153,17 @@ class Transfer {
         switch (expr.op.ty) {
             case TokenType.OAdd:
                 return new Opcode(OPCODE_MAP[TokenType.OSub], {
-                    LHS: expr_, RHS: 0
+                    LHS: expr_,
+                    RHS: 0,
                 }, {})
             case TokenType.OSub:
                 return new Opcode(OPCODE_MAP[TokenType.OSub], {
-                    LHS: 0, RHS: expr_
+                    LHS: 0,
+                    RHS: expr_,
                 }, {})
             case TokenType.ONot:
                 return new Opcode(OPCODE_MAP[TokenType.ONot], {
-                    VALUE: expr_
+                    VALUE: expr_,
                 }, {})
         }
         return new Unknown()
@@ -209,7 +211,7 @@ class Transfer {
         }
         return new CallDefinition(
             this.sprite!.definitions[expr.expr.name.value as string],
-            expr.args.map(arg => this.generate_ir_expr(arg))
+            expr.args.map((arg) => this.generate_ir_expr(arg)),
         )
     }
 

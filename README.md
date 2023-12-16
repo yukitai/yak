@@ -81,10 +81,10 @@ Yak projects can be compiled into a Scratch(.sb3) file.
    the function name to specify the function's type. Here's an Example:
 
    ```python
-   def Eq<T>(lhs: T, rhs: T):
+   def Eq<T>(lhs: T, rhs: T) -> bool:
        return lhs == rhs
 
-   def Test(x: num, y: num):
+   def Test(x: num, y: num) -> bool:
        return Eq::<num>(x, y)
    ```
 

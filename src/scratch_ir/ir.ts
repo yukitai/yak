@@ -240,7 +240,7 @@ class Opcode extends IR {
 
 class Unknown extends Opcode {
     constructor() {
-        super("UNKNOWN", {}, {})
+        super('UNKNOWN', {}, {})
     }
 
     display(fmt: Formatter) {
@@ -258,17 +258,19 @@ class CallDefinition extends Opcode {
 
     constructor(def: Definition, inputs: Input[]) {
         // actually this is wrong
-        super("__call_definition", {}, {})
+        super('__call_definition', {}, {})
         this.definition = def
         this.raw_inputs = inputs
     }
 
     display(fmt: Formatter) {
-        fmt.write_command("call", this.definition.name, ...this.raw_inputs)
+        fmt.write_command('call', this.definition.name, ...this.raw_inputs)
     }
 
     toString(): string {
-        return `(${CYAN}${this.opcode}${CLEAR} ${this.raw_inputs.map(x => x.toString()).join(", ")})`
+        return `(${CYAN}${this.opcode}${CLEAR} ${
+            this.raw_inputs.map((x) => x.toString()).join(', ')
+        })`
     }
 }
 
@@ -384,6 +386,7 @@ export {
     type BlockInputs,
     Branch,
     type BranchInputs,
+    CallDefinition,
     Command,
     CommandGetStack,
     CommandPopStack,
@@ -399,8 +402,7 @@ export {
     type ScratchValue,
     Sprite,
     StackVariable,
+    Unknown,
     type Value,
     Variable,
-    CallDefinition,
-    Unknown
 }

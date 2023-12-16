@@ -413,7 +413,7 @@ class Lexer {
                     this.move(-2)
                     break
                 }
-                if (this.peek(2) !== '::') { break }
+                if (this.peek(2) !== '::') break
                 this.move(2)
             }
             end = this.get_pos_info()

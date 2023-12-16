@@ -434,7 +434,8 @@ class FuncType {
         }
         let type_matched = this.ret_t.i_say_you_are(ty.ret_t)
         this.args.forEach((type, i) => {
-            type_matched = type.i_say_you_are((ty as FuncType).args[i]) && type_matched
+            type_matched = type.i_say_you_are((ty as FuncType).args[i]) &&
+                type_matched
         })
         if (this.target instanceof ast.InferType) {
             this.target.infer_result = ty
