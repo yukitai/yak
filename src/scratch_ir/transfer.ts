@@ -15,19 +15,20 @@ import {
 import * as ast from '../../grammar/ast.ts'
 import { TokenType } from '../../grammar/token.ts'
 import { TypeView } from './type_view.ts'
+import * as opcodes from './opcodes.ts'
 
 const OPCODE_MAP = {
-    [TokenType.OAdd]: 'operator_add',
-    [TokenType.OSub]: 'operator_sub',
-    [TokenType.OMul]: 'operator_mul',
-    [TokenType.ODiv]: 'operator_div',
-    [TokenType.OMod]: 'operator_mod',
-    [TokenType.OEq]: 'operator_equals',
-    [TokenType.OLt]: 'operator_less',
-    [TokenType.OGt]: 'operator_greater',
-    [TokenType.OAnd]: 'operator_and',
-    [TokenType.OOr]: 'operator_or',
-    [TokenType.ONot]: 'operator_not',
+    [TokenType.OAdd]: opcodes.OPCODE_OPERATOR_ADD,
+    [TokenType.OSub]: opcodes.OPCODE_OPERATOR_SUBTRACT,
+    [TokenType.OMul]: opcodes.OPCODE_OPERATOR_MULTIPLY,
+    [TokenType.ODiv]: opcodes.OPCODE_OPERATOR_DIVIDE,
+    [TokenType.OMod]: opcodes.OPCODE_OPERATOR_MOD,
+    [TokenType.OEq]: opcodes.OPCODE_OPERATOR_EQUALS,
+    [TokenType.OLt]: opcodes.OPCODE_OPERATOR_LT,
+    [TokenType.OGt]: opcodes.OPCODE_OPERATOR_GT,
+    [TokenType.OAnd]: opcodes.OPCODE_OPERATOR_AND,
+    [TokenType.OOr]: opcodes.OPCODE_OPERATOR_OR,
+    [TokenType.ONot]: opcodes.OPCODE_OPERATOR_NOT,
 }
 
 class Transfer {
@@ -127,7 +128,7 @@ class Transfer {
             this.locals!.push(new StackVariable(name, tv.offset + i))
         }
         const variable = this.locals![tv.offset] ?? new Unknown()
-        return new Opcode('setvariableto', {
+        return new Opcode(opcodes.OPCODE_DATA_SETVARIABLETO, {
             VARIABLE: variable,
             VALUE: this.generate_ir_expr(def.expr),
         }, {})
@@ -213,7 +214,7 @@ class Transfer {
         } else {
             switch (expr.op.ty) {
                 case TokenType.OAssign:
-                    return new Opcode('setvariableto', {
+                    return new Opcode(opcodes.OPCODE_DATA_SETVARIABLETO, {
                         VARIABLE: new Unknown(),
                         VALUE: rhs,
                     }, {})
@@ -282,9 +283,9 @@ class Transfer {
 
     generate_ir_if_stmt(stmt: ast.IfStatement): Block {
         if (stmt.else_case) {
-            return new Opcode('control_ifelse', {}, {})
+            return new Opcode(opcodes.OPCODE_CONTROL_IF_ELSE, {}, {})
         } else {
-            return new Opcode('control_if', {
+            return new Opcode(opcodes.OPCODE_CONTROL_IF, {
                 CONDITION: this.generate_ir_expr(stmt.expr),
             }, {
                 BRANCH: this.generate_ir_block(stmt.body),
@@ -303,7 +304,7 @@ class Transfer {
     generate_ir_return_stmt(stmt: ast.ReturnStatement): Block {
         if (stmt.expr) {
             this.branch!.blocks.push(
-                new Opcode('setvariableto', {
+                new Opcode(opcodes.OPCODE_DATA_SETVARIABLETO, {
                     VARIABLE: this.get_ret(0),
                     VALUE: this.generate_ir_expr(stmt.expr),
                 }, {}),

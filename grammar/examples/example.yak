@@ -1,5 +1,4 @@
-let Global = "Hello, "
+let Hello = "Hello, "
 
-def Test():
-    let scoped = "World!"
-    return Global + scoped
+def SayHello(n):
+    return Hello + n

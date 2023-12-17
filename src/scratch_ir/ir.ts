@@ -1,8 +1,12 @@
+// deno-lint-ignore-file no-explicit-any
+
 import { BOLD, CYAN, GRAY, MAGENTA, RED, YELLOW } from '../error/colors.ts'
 import { CLEAR } from '../error/colors.ts'
+import { generate_input } from '../json_gen/json_gen.ts'
 import { ToStringable } from '../utils.ts'
 import { Formatter } from './formatter.ts'
 import { Id, next_id } from './id.ts'
+import * as opcodes from './opcodes.ts'
 
 type Offset = number
 type ScratchValue = string | number | boolean
@@ -12,6 +16,7 @@ type BranchInputs = Record<string, Branch>
 
 abstract class IR {
     abstract display(fmt: Formatter): void
+    abstract generate_json(json: any): any
 
     _display_item<T extends string & keyof this>(
         fmt: Formatter,
@@ -87,6 +92,13 @@ class Project extends IR {
         this._display_item(fmt, 'global_definitions')
         fmt.dedent()
     }
+
+    generate_json(json: any): any {
+        json.targets = []
+        Object.values(this.sprites)
+            .forEach((sp) => sp.generate_json(json.targets))
+        this.stage.generate_json(json.target)
+    }
 }
 
 class Sprite extends IR {
@@ -127,6 +139,21 @@ class Sprite extends IR {
     add_list(list: List) {
         this.lists[list.id] = list
     }
+
+    generate_json(json: any): any {
+        json.isStage = this.name === 'stage'
+        json.name = this.name
+        json.variables = {}
+        json.lists = {}
+        json.blocks = {}
+        json.comments = {}
+        Object.values(this.variables)
+            .forEach(it => it.generate_json(json))
+        Object.values(this.lists)
+            .forEach(it => it.generate_json(json))
+        Object.values(this.definitions)
+            .forEach(it => it.generate_json(json))
+    }
 }
 
 class Definition extends IR {
@@ -149,6 +176,10 @@ class Definition extends IR {
         fmt.write_command('define', this.name, ...this.inputs)
         this.body.display(fmt)
     }
+
+    generate_json(json: any): any {
+        this.body.generate_json(json)
+    }
 }
 
 class Variable extends IR {
@@ -170,6 +201,10 @@ class Variable extends IR {
     toString() {
         return `(${YELLOW}var${CLEAR}:${MAGENTA}${this.name}${CLEAR})`
     }
+
+    generate_json(json: any): any {
+        json.variables[this.id] = [this.name, this.init]
+    }
 }
 
 class StackVariable extends Variable {
@@ -188,6 +223,9 @@ class StackVariable extends Variable {
 
     toString() {
         return `(${YELLOW}local${CLEAR}:${MAGENTA}${this.name}${CLEAR})`
+    }
+
+    generate_json(_json: any): any {
     }
 }
 
@@ -210,15 +248,21 @@ class List extends IR {
     toString() {
         return `(${YELLOW}list${CLEAR}:${MAGENTA}${this.name}${CLEAR})`
     }
+
+    generate_json(json: any): any {
+        json.lists[this.id] = [this.name, this.init]
+    }
 }
 
 class Opcode extends IR {
+    id: Id
     opcode: string
     inputs: BlockInputs
     branches: BranchInputs
 
     constructor(opcode: string, inputs: BlockInputs, branches: BranchInputs) {
         super()
+        this.id = next_id()
         this.opcode = opcode
         this.inputs = inputs
         this.branches = branches
@@ -244,6 +288,15 @@ class Opcode extends IR {
             }).join(', ')
         })`
     }
+
+    generate_json(json: any): any {
+        json.blocks[this.id] = {
+            opcode: this.opcode,
+            inputs: Object.values(this.inputs)
+                .map(it => generate_input(json)),
+        }
+        return this.id
+    }
 }
 
 class Unknown extends Opcode {
@@ -258,6 +311,9 @@ class Unknown extends Opcode {
     toString(): string {
         return `${RED}${BOLD}UNKNOWN${CLEAR}`
     }
+
+    generate_json(_json: any): any {
+    }
 }
 
 class CallDefinition extends Opcode {
@@ -266,7 +322,7 @@ class CallDefinition extends Opcode {
 
     constructor(def: Definition, inputs: Input[]) {
         // actually this is wrong
-        super('__call_definition', {}, {})
+        super(opcodes.OPCODE_PROCEDURES_PROTOTYPE, {}, {})
         this.definition = def
         this.raw_inputs = inputs
     }
@@ -279,6 +335,9 @@ class CallDefinition extends Opcode {
         return `(${CYAN}${this.opcode}${CLEAR} ${
             this.raw_inputs.map((x) => x.toString()).join(', ')
         })`
+    }
+
+    generate_json(_json: any): any {
     }
 }
 
@@ -303,6 +362,9 @@ class CommandPushStack extends Command {
     toString() {
         return `(${RED}${BOLD}error${CLEAR} ${GRAY}PUSH_STACK${CLEAR})`
     }
+
+    generate_json(_json: any): any {
+    }
 }
 
 class CommandReturn extends Command {
@@ -317,6 +379,9 @@ class CommandReturn extends Command {
     toString() {
         return `(${RED}${BOLD}error${CLEAR} ${GRAY}RETURN${CLEAR})`
     }
+
+    generate_json(_json: any): any {
+    }
 }
 
 class CommandPopStack extends Command {
@@ -330,6 +395,9 @@ class CommandPopStack extends Command {
 
     toString() {
         return `(${RED}${BOLD}error${CLEAR} ${GRAY}POP_STACK${CLEAR})`
+    }
+
+    generate_json(_json: any): any {
     }
 }
 
@@ -347,6 +415,9 @@ class CommandGetStack extends Command {
 
     toString() {
         return `(${CYAN}GET_STACK${CLEAR} ${this.offset.toString()})`
+    }
+
+    generate_json(_json: any): any {
     }
 }
 
@@ -367,6 +438,9 @@ class CommandSetStack extends Command {
     toString() {
         return `(${RED}${BOLD}error${CLEAR} ${GRAY}SET_STACK${CLEAR})`
     }
+
+    generate_json(_json: any): any {
+    }
 }
 
 type Block = Opcode | Command
@@ -386,6 +460,10 @@ class Branch extends IR {
             block.display(fmt)
         })
         fmt.dedent()
+    }
+
+    generate_json(json: any): any {
+        this.blocks.forEach(it => it.generate_json(json))
     }
 }
 
