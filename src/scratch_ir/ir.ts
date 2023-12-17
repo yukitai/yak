@@ -148,11 +148,11 @@ class Sprite extends IR {
         json.blocks = {}
         json.comments = {}
         Object.values(this.variables)
-            .forEach(it => it.generate_json(json))
+            .forEach((it) => it.generate_json(json))
         Object.values(this.lists)
-            .forEach(it => it.generate_json(json))
+            .forEach((it) => it.generate_json(json))
         Object.values(this.definitions)
-            .forEach(it => it.generate_json(json))
+            .forEach((it) => it.generate_json(json))
     }
 }
 
@@ -293,7 +293,7 @@ class Opcode extends IR {
         json.blocks[this.id] = {
             opcode: this.opcode,
             inputs: Object.values(this.inputs)
-                .map(it => generate_input(json)),
+                .map((_it) => generate_input(json)),
         }
         return this.id
     }
@@ -463,7 +463,7 @@ class Branch extends IR {
     }
 
     generate_json(json: any): any {
-        this.blocks.forEach(it => it.generate_json(json))
+        this.blocks.forEach((it) => it.generate_json(json))
     }
 }
 

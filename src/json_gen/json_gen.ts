@@ -1,4 +1,6 @@
-import { IR, Input } from '../scratch_ir/ir.ts'
+// deno-lint-ignore-file no-explicit-any
+
+import { Input, IR } from '../scratch_ir/ir.ts'
 
 const generate_json = (ir: IR): any => {
     const json = {}
@@ -6,8 +8,8 @@ const generate_json = (ir: IR): any => {
     return json
 }
 
-const generate_input = (inp: Input): any => {
-    return "UNK"
+const generate_input = (_inp: Input): any => {
+    return 'UNK'
 }
 
-export { generate_json, generate_input }
+export { generate_input, generate_json }
