@@ -129,7 +129,7 @@ class Transfer {
         const variable = this.locals![tv.offset] ?? new Unknown()
         return new Opcode('setvariableto', {
             VARIABLE: variable,
-            VALUE: this.generate_ir_expr(def.expr)
+            VALUE: this.generate_ir_expr(def.expr),
         }, {})
     }
 

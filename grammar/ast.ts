@@ -968,6 +968,7 @@ export {
     Ident,
     IfStatement,
     InferType,
+    LetDefinition,
     Literal,
     NameType,
     ReturnStatement,
@@ -979,5 +980,4 @@ export {
     UseDefinition,
     type Value,
     WhileStatement,
-    LetDefinition,
 }
