@@ -458,6 +458,9 @@ class Lexer {
                 case 'in':
                     ty = TokenType.KIn
                     break
+                case 'let':
+                    ty = TokenType.KLet
+                    break
                 case 'and':
                     ty = TokenType.OAnd
                     break

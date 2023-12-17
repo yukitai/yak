@@ -41,7 +41,7 @@ Yak projects can be compiled into a Scratch(.sb3) file.
    examples:
 
    ```plaintext
-   abc r#+# r#def# abc::def::r#return#
+   abc r#+# r#def# abc::ghi::r#return#
    ```
 
    ### Fucntions

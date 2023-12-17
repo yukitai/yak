@@ -29,6 +29,7 @@ import {
     Ident,
     IfStatement,
     InferType,
+    LetDefinition,
     Literal,
     NameType,
     ReturnStatement,
@@ -249,6 +250,7 @@ class Parser {
             if (
                 token.ty === TokenType.KDef ||
                 token.ty === TokenType.KUse ||
+                token.ty === TokenType.KLet ||
                 token.ty === TokenType.KStruct
             ) break
             this.move()
@@ -308,6 +310,8 @@ class Parser {
                 return this.parse_use_definition()
             case TokenType.KStruct:
                 return this.parse_struct_definition()
+            case TokenType.KLet:
+                return this.parse_let_definition()
             default:
                 this.expected(token, [
                     TokenType.KUse,
@@ -412,6 +416,14 @@ class Parser {
         }
         this.dedent()
         return ast
+    }
+
+    parse_let_definition(): LetDefinition {
+        const klet = this.assert_next_error(TokenType.KLet)
+        const ident = this.parse_typed_ident()
+        const oassign = this.assert_next_error(TokenType.OAssign)
+        const expr = this.parse_expr()
+        return new LetDefinition(klet, ident, oassign, expr)
     }
 
     parse_type(): Type {
@@ -583,6 +595,8 @@ class Parser {
                 return this.parse_forin_statement()
             case TokenType.KReturn:
                 return this.parse_return_statement()
+            case TokenType.KLet:
+                return this.parse_let_definition()
             default:
                 return new ExprStatement(this.parse_expr())
         }
@@ -687,7 +701,17 @@ class Parser {
     }
 
     parse_expr(): Expr {
-        return this.parse_expr_or()
+        return this.parse_expr_assign()
+    }
+
+    parse_expr_assign(): Expr {
+        const lhs = this.parse_expr_or()
+        const op = this.assert_next(TokenType.OAssign)
+        if (op) {
+            const rhs = this.parse_expr()
+            return new ExprD(lhs, op, rhs)
+        }
+        return lhs
     }
 
     parse_expr_or(): Expr {

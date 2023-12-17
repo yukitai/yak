@@ -270,6 +270,7 @@ type Statement =
     | WhileStatement
     | ForInStatement
     | ReturnStatement
+    | LetDefinition
 
 class ExprStatement extends AST {
     span: Span
@@ -488,6 +489,7 @@ type Definition =
     | UseDefinition
     | FuncDefinition
     | StructDefinition
+    | LetDefinition
     | TypedIdent
 
 class UseDefinition extends AST {
@@ -607,6 +609,38 @@ class StructDefinition extends AST {
         this._display_item(fmt, 'ident')
         this._display_item(fmt, 'colon')
         this._display_item(fmt, 'fields')
+        fmt.dedent()
+    }
+}
+
+class LetDefinition extends AST {
+    span: Span
+    let: Token
+    ident: TypedIdent
+    oassign: Token
+    expr: Expr
+
+    constructor(
+        klet: Token,
+        ident: TypedIdent,
+        oassign: Token,
+        expr: Expr,
+    ) {
+        super()
+        this.let = klet
+        this.ident = ident
+        this.oassign = oassign
+        this.expr = expr
+        this.span = klet.span.merge(expr.span)
+    }
+
+    display(fmt: Formatter) {
+        fmt.write('LetDefinition', this)
+        fmt.indent()
+        this._display_item(fmt, 'let')
+        this._display_item(fmt, 'ident')
+        this._display_item(fmt, 'oassign')
+        this._display_item(fmt, 'expr')
         fmt.dedent()
     }
 }
@@ -945,4 +979,5 @@ export {
     UseDefinition,
     type Value,
     WhileStatement,
+    LetDefinition,
 }

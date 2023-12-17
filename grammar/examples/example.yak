@@ -1,5 +1,5 @@
-def Eq<T>(lhs: T, rhs: T) -> bool:
-    return lhs == rhs
+let Global = "Hello, "
 
-def Test(x: num, y: num) -> bool:
-    return Eq::<num>(x, y)
+def Test():
+    let scoped = "World!"
+    return Global + scoped

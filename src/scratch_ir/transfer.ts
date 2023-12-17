@@ -37,6 +37,7 @@ class Transfer {
     type_view_local?: TypeView
     type_view_global: TypeView
     args?: Variable[]
+    locals?: StackVariable[]
     globals: Variable[]
     branch?: Branch
     sprite?: Sprite
@@ -63,7 +64,7 @@ class Transfer {
     get_name(name: string): Value {
         if (this.type_view_local?.types[name]) {
             const offset = this.type_view_local.types[name].offset
-            return new StackVariable(name, offset)
+            return this.locals![offset] ?? new Unknown()
         } else if (this.type_view_arg?.types[name]) {
             const offset = this.type_view_arg.types[name].offset
             return this.args![offset] ?? new Unknown()
@@ -79,6 +80,8 @@ class Transfer {
         ;(this.checker.ast as ast.File).definitions.forEach((it) => {
             if (it instanceof ast.FuncDefinition) {
                 this.sprite!.add_definition(this.generate_ir_func(it))
+            } else if (it instanceof ast.LetDefinition) {
+                this.sprite!.add_variable(this.generate_ir_let(it))
             }
         })
         return this.sprite
@@ -88,6 +91,7 @@ class Transfer {
         this.type_view_arg = new TypeView()
         this.type_view_local = new TypeView()
         this.args = []
+        this.locals = []
         def.args.forEach((arg) => {
             const arg_name = arg.ident.name.value as string
             const field = this.type_view_arg!.add(arg_name, arg.resolved_type!)
@@ -106,17 +110,40 @@ class Transfer {
         return definition
     }
 
+    generate_ir_let(def: ast.LetDefinition): Variable {
+        const name = def.ident.ident.name.value as string
+        const tv = this.type_view_global.add(name, def.ident.resolved_type!)
+        for (let i = 0; i < tv.size; ++i) {
+            this.globals.push(new Variable(name))
+        }
+        const variable = this.globals[tv.offset] ?? new Unknown()
+        return variable
+    }
+
+    generate_ir_let_stmt(def: ast.LetDefinition): Block {
+        const name = def.ident.ident.name.value as string
+        const tv = this.type_view_local!.add(name, def.ident.resolved_type!)
+        for (let i = 0; i < tv.size; ++i) {
+            this.locals!.push(new StackVariable(name, tv.offset + i))
+        }
+        const variable = this.locals![tv.offset] ?? new Unknown()
+        return new Opcode('setvariableto', {
+            VARIABLE: variable,
+            VALUE: this.generate_ir_expr(def.expr)
+        }, {})
+    }
+
     generate_ir_block(block: ast.Block, br?: Branch): Branch {
         const branch = br ?? new Branch()
         block.stmts.forEach((stmt) => {
-            branch.blocks.push(...this.generate_ir_stmt(stmt))
+            branch.blocks.push(this.generate_ir_stmt(stmt))
         })
         return branch
     }
 
-    generate_ir_stmt(stmt: ast.Statement): Block[] {
+    generate_ir_stmt(stmt: ast.Statement): Block {
         if (stmt instanceof ast.ExprStatement) {
-            return [this.generate_ir_expr(stmt.expr) as Block]
+            return this.generate_ir_expr(stmt.expr) as Block
         } else if (stmt instanceof ast.IfStatement) {
             return this.generate_ir_if_stmt(stmt)
         } else if (stmt instanceof ast.WhileStatement) {
@@ -125,8 +152,10 @@ class Transfer {
             return this.generate_ir_forin_stmt(stmt)
         } else if (stmt instanceof ast.ReturnStatement) {
             return this.generate_ir_return_stmt(stmt)
+        } else if (stmt instanceof ast.LetDefinition) {
+            return this.generate_ir_let_stmt(stmt)
         }
-        return [new Unknown()]
+        return new Unknown()
     }
 
     generate_ir_expr(expr: ast.Expr): Value {
@@ -189,10 +218,42 @@ class Transfer {
                         VALUE: rhs,
                     }, {})
                 case TokenType.OFloorDiv:
+                    return new Opcode('__op_floor', {
+                        VALUE: new Opcode(OPCODE_MAP[TokenType.ODiv], {
+                            LHS: lhs,
+                            RHS: rhs,
+                        }, {}),
+                    }, {})
                 case TokenType.OPow:
+                    return new Opcode('__op_exp', {
+                        VALUE: new Opcode(OPCODE_MAP[TokenType.OMul], {
+                            LHS: new Opcode('__op_log', {
+                                VALUE: lhs,
+                            }, {}),
+                            RHS: rhs,
+                        }, {}),
+                    }, {})
                 case TokenType.ONe:
+                    return new Opcode(OPCODE_MAP[TokenType.ONot], {
+                        VALUE: new Opcode(OPCODE_MAP[TokenType.OEq], {
+                            LHS: lhs,
+                            RHS: rhs,
+                        }, {}),
+                    }, {})
                 case TokenType.OLe:
+                    return new Opcode(OPCODE_MAP[TokenType.ONot], {
+                        VALUE: new Opcode(OPCODE_MAP[TokenType.OGt], {
+                            LHS: lhs,
+                            RHS: rhs,
+                        }, {}),
+                    }, {})
                 case TokenType.OGe:
+                    return new Opcode(OPCODE_MAP[TokenType.ONot], {
+                        VALUE: new Opcode(OPCODE_MAP[TokenType.OLt], {
+                            LHS: lhs,
+                            RHS: rhs,
+                        }, {}),
+                    }, {})
             }
         }
         return new Opcode('unknown', {
@@ -219,40 +280,36 @@ class Transfer {
         return this.generate_ir_expr(expr.expr)
     }
 
-    generate_ir_if_stmt(stmt: ast.IfStatement): Block[] {
+    generate_ir_if_stmt(stmt: ast.IfStatement): Block {
         if (stmt.else_case) {
-            return [new Opcode('control_ifelse', {}, {})]
+            return new Opcode('control_ifelse', {}, {})
         } else {
-            return [
-                new Opcode('control_if', {
-                    CONDITION: this.generate_ir_expr(stmt.expr),
-                }, {
-                    BRANCH: this.generate_ir_block(stmt.body),
-                }),
-            ]
+            return new Opcode('control_if', {
+                CONDITION: this.generate_ir_expr(stmt.expr),
+            }, {
+                BRANCH: this.generate_ir_block(stmt.body),
+            })
         }
     }
 
-    generate_ir_while_stmt(_stmt: ast.WhileStatement): Block[] {
-        return [new Unknown()]
+    generate_ir_while_stmt(_stmt: ast.WhileStatement): Block {
+        return new Unknown()
     }
 
-    generate_ir_forin_stmt(_stmt: ast.ForInStatement): Block[] {
-        return [new Unknown()]
+    generate_ir_forin_stmt(_stmt: ast.ForInStatement): Block {
+        return new Unknown()
     }
 
-    generate_ir_return_stmt(stmt: ast.ReturnStatement): Block[] {
+    generate_ir_return_stmt(stmt: ast.ReturnStatement): Block {
         if (stmt.expr) {
-            return [
+            this.branch!.blocks.push(
                 new Opcode('setvariableto', {
                     VARIABLE: this.get_ret(0),
                     VALUE: this.generate_ir_expr(stmt.expr),
                 }, {}),
-                new CommandReturn(),
-            ]
-        } else {
-            return [new CommandReturn()]
+            )
         }
+        return new CommandReturn()
     }
 }
 

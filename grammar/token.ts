@@ -46,6 +46,7 @@ enum TokenType {
     ODot = 'operator .',
 
     KUse = 'keyword use',
+    KLet = 'keyword let',
     KDef = 'keyword def',
     KReturn = 'keyword return',
     KStruct = 'keyword struct',

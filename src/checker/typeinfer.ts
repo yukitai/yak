@@ -58,6 +58,8 @@ class TypeInfer {
             return this.scopes.find(def.ident.name.value as string)
         } else if (def instanceof ast.StructDefinition) {
             return this.scopes.find(def.ident.name.value as string)
+        } else if (def instanceof ast.LetDefinition) {
+            return this.scopes.find(def.ident.ident.name.value as string)
         } else {
             const infer_t = this.ufs.insert(new InferType(def))
             return infer_t
@@ -119,6 +121,15 @@ class TypeInfer {
         this.types[def.ident.name.value as string] = record_t
     }
 
+    infer_let_definition(def: ast.LetDefinition) {
+        const expr_t = this.infer_expr(def.expr)
+        const ident_t = from_ast(def.ident.type, this.types)
+        def.ident.resolved_type = ident_t
+        const ident_t_ = this.ufs.insert(ident_t)
+        this.scopes.set(def.ident.ident.name.value as string, ident_t_)
+        this.ufs.union(expr_t, ident_t_)
+    }
+
     infer_block(block: ast.Block): boolean {
         this.scopes.enter_scope()
         let has_return = false
@@ -157,6 +168,8 @@ class TypeInfer {
             const _pat_t = this.get_ident_type(stmt.pat)
             const _expr_t = this.infer_expr(stmt.expr)
             return this.infer_block(stmt.body)
+        } else if (stmt instanceof ast.LetDefinition) {
+            this.infer_let_definition(stmt)
         } else if (stmt instanceof ast.ReturnStatement) {
             const expr_t = stmt.expr ? this.infer_expr(stmt.expr) : this._ty_nil
             this.ufs.union(
@@ -306,6 +319,8 @@ class TypeInfer {
                     this.infer_func_definition(it)
                 } else if (it instanceof ast.StructDefinition) {
                     this.infer_struct_definition(it)
+                } else if (it instanceof ast.LetDefinition) {
+                    this.infer_let_definition(it)
                 }
             },
         )

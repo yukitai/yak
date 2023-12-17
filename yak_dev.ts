@@ -54,6 +54,7 @@ import { YakContext } from './src/context.ts'
 import { display_errors } from './src/error/display.ts'
 import { Formatter } from './src/scratch_ir/formatter.ts'
 import { Transfer } from './src/scratch_ir/transfer.ts'
+import { Formatter as _Formatter } from './grammar/formatter.ts'
 
 const code = await Deno.readTextFile(
     './grammar/examples/example.yak',
@@ -76,6 +77,8 @@ if (parser.has_error()) {
         const checker = new Checker(parser, ast)
 
         checker.check_file()
+
+        // checker.ast.display(new _Formatter())
 
         if (parser.has_error()) {
             display_errors(parser.errors)

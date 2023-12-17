@@ -119,6 +119,14 @@ class Sprite extends IR {
     add_definition(def: Definition) {
         this.definitions[def.id] = def
     }
+
+    add_variable(variable: Variable) {
+        this.variables[variable.id] = variable
+    }
+
+    add_list(list: List) {
+        this.lists[list.id] = list
+    }
 }
 
 class Definition extends IR {
@@ -148,7 +156,7 @@ class Variable extends IR {
     id: Id
     init: ScratchValue
 
-    constructor(name: string, init = '') {
+    constructor(name: string, init: ScratchValue = '') {
         super()
         this.name = name
         this.id = next_id()
@@ -164,12 +172,12 @@ class Variable extends IR {
     }
 }
 
-class StackVariable extends IR {
+class StackVariable extends Variable {
     name: string
     offset: Offset
 
-    constructor(name: string, offset: Offset) {
-        super()
+    constructor(name: string, offset: Offset, init?: ScratchValue) {
+        super(name, init)
         this.name = name
         this.offset = offset
     }
