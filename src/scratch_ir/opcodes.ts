@@ -125,6 +125,7 @@ export const OPCODE_DATA_SHOWLIST = 'data_showlist'
 export const OPCODE_DATA_HIDELIST = 'data_hidelist'
 export const OPCODE_PROCEDURES_DEFINITION = 'procedures_definition'
 export const OPCODE_PROCEDURES_PROTOTYPE = 'procedures_prototype'
+export const OPCODE_PROCEDURES_CALL = 'procedures_call'
 export const OPCODE_ARGUMENT_REPORTER_STRING_NUMBER =
     'argument_reporter_string_number'
 export const OPCODE_ARGUMENT_REPORTER_BOOLEAN = 'argument_reporter_boolean'

@@ -68,8 +68,13 @@ class TypeInfer {
 
     infer_func_definition(def: ast.FuncDefinition) {
         const ret_t = from_ast(def.ret_t, this.types)
+        const func_types: Record<string, Type> = {}
         let func_t: Type = new FuncType(
-            def.args.map((x) => from_ast(x, this.types)),
+            def.args.map((x) => {
+                const type = from_ast(x, this.types)
+                func_types[x.ident.name.value as string] = type
+                return type
+            }),
             ret_t,
             def,
         )
@@ -84,7 +89,7 @@ class TypeInfer {
         this.types[def.func_name.name.value as string] = func_t
         this.scopes.enter_scope()
         def.args.forEach((arg) => {
-            const arg_t = from_ast(arg.type, this.types)
+            const arg_t = func_types[arg.ident.name.value as string]
             this.scopes.set(
                 arg.ident.name.value as string,
                 this.ufs.insert(arg_t),
@@ -216,6 +221,18 @@ class TypeInfer {
             }
             const expr_t = this.get_ident_type(expr)
             return expr_t ? expr_t : this.ufs.insert(new InferType())
+        } else if (expr instanceof ast.StructConstruction) {
+            const fields = Object.fromEntries(
+                expr.fields.map(({ name, expr }) => {
+                    const field_t = this.infer_expr(expr)
+                    const ty = new InferType(name)
+                    const ty_t = this.ufs.insert(ty)
+                    this.ufs.union(ty_t, field_t)
+                    return [name.name.value as string, ty]
+                })
+            )
+            const expr_t = new RecordType(fields, expr)
+            return this.ufs.insert(expr_t)
         } else {
             return this.ufs.insert(new InferType())
         }

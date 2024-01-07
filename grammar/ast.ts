@@ -114,6 +114,7 @@ type Expr =
     | ExprI
     | ExprD
     | ExprG
+    | StructConstruction
 
 class Literal extends AST {
     span: Span
@@ -147,6 +148,40 @@ class ExprS extends AST {
         fmt.indent()
         this._display_item(fmt, 'op')
         this._display_item(fmt, 'expr')
+        fmt.dedent()
+    }
+}
+
+type StructConstructionField = {
+    name: Ident
+    colon: Token
+    expr: Expr
+}
+
+class StructConstruction extends AST {
+    span: Span
+    lbrace: Token
+    fields: StructConstructionField[]
+    rbrace: Token
+
+    constructor(
+        lbrace: Token,
+        fields: StructConstructionField[],
+        rbrace: Token,
+    ) {
+        super()
+        this.lbrace = lbrace
+        this.fields = fields
+        this.rbrace = rbrace
+        this.span = lbrace.span.merge(rbrace.span)
+    }
+
+    display(fmt: Formatter) {
+        fmt.write('StructConstruction', this)
+        fmt.indent()
+        this._display_item(fmt, 'lbrace')
+        this._display_item(fmt, 'fields')
+        this._display_item(fmt, 'rbrace')
         fmt.dedent()
     }
 }
@@ -973,6 +1008,8 @@ export {
     NameType,
     ReturnStatement,
     type Statement,
+    StructConstruction,
+    type StructConstructionField,
     StructDefinition,
     type Type,
     TypedIdent,

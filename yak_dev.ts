@@ -43,7 +43,10 @@ if (parser.has_error()) {
             ir.display(new Formatter())
 
             console.log(`\n${YELLOW}${BOLD}ScratchJson Output${CLEAR}:`)
-            console.dir(generate_json(ir))
+
+            const json = generate_json(ir)
+            console.dir(json, { depth: 100 })
+            console.log(JSON.stringify(json))
         }
     }
 }

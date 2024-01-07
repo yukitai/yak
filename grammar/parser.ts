@@ -34,6 +34,8 @@ import {
     NameType,
     ReturnStatement,
     Statement,
+    StructConstruction,
+    StructConstructionField,
     StructDefinition,
     Type,
     TypedIdent,
@@ -450,7 +452,7 @@ class Parser {
                 }
                 this.expected(this.peek(), [
                     TokenType.Comma,
-                    TokenType.RParen,
+                    TokenType.OGt,
                 ])
             }
             return new GenericType(type, lt, generics, gt!)
@@ -938,6 +940,31 @@ class Parser {
                         TokenType.RParen,
                     ),
                 )
+            case TokenType.LBrace: {
+                this.move()
+                const fields: StructConstructionField[] = []
+                let rbrace: Token | undefined
+                if (!(rbrace = this.assert_next(TokenType.RBrace)!)) {
+                    while (!this.is_eof()) {
+                        const name = this.assert_ident_error()
+                        const colon = this.assert_next_error(TokenType.Colon)
+                        const expr = this.parse_expr()
+                        fields.push({ name, colon, expr })
+                        if (this.assert_next(TokenType.Comma)) {
+                            continue
+                        } else if (
+                            (rbrace = this.assert_next(TokenType.RBrace)!)
+                        ) {
+                            break
+                        }
+                        this.expected(this.peek(), [
+                            TokenType.Comma,
+                            TokenType.RBrace,
+                        ])
+                    }
+                }
+                return new StructConstruction(token, fields, rbrace!)
+            }
             default:
                 this.move()
                 this.expected(token, [

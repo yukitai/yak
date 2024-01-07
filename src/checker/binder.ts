@@ -121,17 +121,14 @@ class Binder {
             } else if (it instanceof TypedIdent) {
                 this.set_name(it.ident, it)
                 it.ident.bind(it)
-                return
             } else if (it instanceof LetDefinition) {
-                this.set_name(it.ident.ident, it)
+                // this.set_name(it.ident.ident, it)
                 it.ident.ident.bind(it)
-                return
             } else if (it instanceof Ident) {
                 const definition = this.find_name(it)
                 if (definition) {
                     it.bind(definition)
                 }
-                return
             } else if (it instanceof ExprD) {
                 if (it.op.ty === TokenType.ODot) {
                     ;(it.rhs as Ident).bind(it.lhs)

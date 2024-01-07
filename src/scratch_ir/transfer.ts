@@ -3,8 +3,11 @@ import {
     Block,
     Branch,
     CallDefinition,
+    CommandPopStack,
+    CommandPushStack,
     CommandReturn,
     Definition,
+    List,
     Opcode,
     Sprite,
     StackVariable,
@@ -18,17 +21,61 @@ import { TypeView } from './type_view.ts'
 import * as opcodes from './opcodes.ts'
 
 const OPCODE_MAP = {
-    [TokenType.OAdd]: opcodes.OPCODE_OPERATOR_ADD,
-    [TokenType.OSub]: opcodes.OPCODE_OPERATOR_SUBTRACT,
-    [TokenType.OMul]: opcodes.OPCODE_OPERATOR_MULTIPLY,
-    [TokenType.ODiv]: opcodes.OPCODE_OPERATOR_DIVIDE,
-    [TokenType.OMod]: opcodes.OPCODE_OPERATOR_MOD,
-    [TokenType.OEq]: opcodes.OPCODE_OPERATOR_EQUALS,
-    [TokenType.OLt]: opcodes.OPCODE_OPERATOR_LT,
-    [TokenType.OGt]: opcodes.OPCODE_OPERATOR_GT,
-    [TokenType.OAnd]: opcodes.OPCODE_OPERATOR_AND,
-    [TokenType.OOr]: opcodes.OPCODE_OPERATOR_OR,
-    [TokenType.ONot]: opcodes.OPCODE_OPERATOR_NOT,
+    [TokenType.OAdd]: {
+        opcode: opcodes.OPCODE_OPERATOR_ADD,
+        lhs: 'NUM1',
+        rhs: 'NUM2',
+    },
+    [TokenType.OSub]: {
+        opcode: opcodes.OPCODE_OPERATOR_SUBTRACT,
+        lhs: 'NUM1',
+        rhs: 'NUM2',
+    },
+    [TokenType.OMul]: {
+        opcode: opcodes.OPCODE_OPERATOR_MULTIPLY,
+        lhs: 'NUM1',
+        rhs: 'NUM2',
+    },
+    [TokenType.ODiv]: {
+        opcode: opcodes.OPCODE_OPERATOR_DIVIDE,
+        lhs: 'NUM1',
+        rhs: 'NUM2',
+    },
+    [TokenType.OMod]: {
+        opcode: opcodes.OPCODE_OPERATOR_MOD,
+        lhs: 'NUM1',
+        rhs: 'NUM2',
+    },
+    [TokenType.OEq]: {
+        opcode: opcodes.OPCODE_OPERATOR_EQUALS,
+        lhs: 'OPERAND1',
+        rhs: 'OPERAND2',
+    },
+    [TokenType.OLt]: {
+        opcode: opcodes.OPCODE_OPERATOR_LT,
+        lhs: 'OPERAND1',
+        rhs: 'OPERAND2',
+    },
+    [TokenType.OGt]: {
+        opcode: opcodes.OPCODE_OPERATOR_GT,
+        lhs: 'OPERAND1',
+        rhs: 'OPERAND2',
+    },
+    [TokenType.OAnd]: {
+        opcode: opcodes.OPCODE_OPERATOR_AND,
+        lhs: 'BOOLEAN1',
+        rhs: 'BOOLEAN2',
+    },
+    [TokenType.OOr]: {
+        opcode: opcodes.OPCODE_OPERATOR_OR,
+        lhs: 'BOOLEAN1',
+        rhs: 'BOOLEAN2',
+    },
+    [TokenType.ONot]: {
+        opcode: opcodes.OPCODE_OPERATOR_NOT,
+        lhs: 'BOOLEAN1',
+        rhs: 'BOOLEAN2',
+    },
 }
 
 class Transfer {
@@ -42,12 +89,18 @@ class Transfer {
     globals: Variable[]
     branch?: Branch
     sprite?: Sprite
+    definitions: Record<string, Definition>
+    stack: List
+    block_scope: number[]
 
     constructor(checker: Checker) {
         this.checker = checker
         this.ret_variables = []
         this.type_view_global = new TypeView()
         this.globals = []
+        this.definitions = {}
+        this.stack = new List('_st', [])
+        this.block_scope = []
     }
 
     get_ret(n: number) {
@@ -85,6 +138,10 @@ class Transfer {
                 this.sprite!.add_variable(this.generate_ir_let(it))
             }
         })
+        this.ret_variables.forEach((it) => {
+            this.sprite!.add_variable(it)
+        })
+        this.sprite.add_list(this.stack)
         return this.sprite
     }
 
@@ -97,17 +154,19 @@ class Transfer {
             const arg_name = arg.ident.name.value as string
             const field = this.type_view_arg!.add(arg_name, arg.resolved_type!)
             for (let i = 0; i < field.size; ++i) {
-                this.args!.push(new Variable(arg_name))
+                this.args!.push(new Variable(arg_name, '', true))
             }
         })
         const func_name = def.func_name.name.value
-        this.branch = new Branch()
-        const body = this.generate_ir_block(def.body, this.branch)
         const definition = new Definition(
             `${func_name}${this.checker.types[func_name].short_name()}`,
             this.args,
-            body,
+            this.get_ret(0),
         )
+        this.definitions[func_name] = definition
+        this.branch = new Branch()
+        const body = this.generate_ir_block(def.body, this.branch)
+        definition.set_body(body)
         return definition
     }
 
@@ -125,20 +184,50 @@ class Transfer {
         const name = def.ident.ident.name.value as string
         const tv = this.type_view_local!.add(name, def.ident.resolved_type!)
         for (let i = 0; i < tv.size; ++i) {
-            this.locals!.push(new StackVariable(name, tv.offset + i))
+            this.locals!.push(
+                new StackVariable(name, tv.offset + i, this.stack),
+            )
+            this.block_scope[this.block_scope.length - 1] += 1
+            this.branch!.blocks.push(new CommandPushStack('', this.stack))
         }
         const variable = this.locals![tv.offset] ?? new Unknown()
-        return new Opcode(opcodes.OPCODE_DATA_SETVARIABLETO, {
-            VARIABLE: variable,
-            VALUE: this.generate_ir_expr(def.expr),
-        }, {})
+        let value: Value
+        if (def.expr instanceof ast.ExprCall) {
+            const def_name = (def.expr.expr as ast.Ident).name.value as string
+            const definition = this.definitions[def_name]
+            this.branch?.blocks.push(
+                this.generate_ir_expr_call(def.expr) as CallDefinition,
+            )
+            value = definition.ret_var
+        } else {
+            value = this.generate_ir_expr(def.expr)
+        }
+        return new Opcode(
+            opcodes.OPCODE_DATA_REPLACEITEMOFLIST,
+            {
+                INDEX: variable.offset + 1,
+                ITEM: value,
+            },
+            {},
+            {
+                LIST: [this.stack.name, this.stack.id],
+            },
+        )
     }
 
     generate_ir_block(block: ast.Block, br?: Branch): Branch {
         const branch = br ?? new Branch()
+        const ori_br = this.branch
+        this.branch = branch
+        this.block_scope.push(0)
         block.stmts.forEach((stmt) => {
             branch.blocks.push(this.generate_ir_stmt(stmt))
         })
+        const number_scopes = this.block_scope.pop()!
+        for (let i = 0; i < number_scopes; ++i) {
+            this.branch!.blocks.push(new CommandPopStack(this.stack))
+        }
+        this.branch = ori_br
         return branch
     }
 
@@ -182,19 +271,34 @@ class Transfer {
         const expr_ = this.generate_ir_expr(expr.expr)
         switch (expr.op.ty) {
             case TokenType.OAdd:
-                return new Opcode(OPCODE_MAP[TokenType.OSub], {
-                    LHS: expr_,
-                    RHS: 0,
-                }, {})
+                return new Opcode(
+                    OPCODE_MAP[TokenType.OSub].opcode,
+                    {
+                        NUM1: expr_,
+                        NUM2: 0,
+                    },
+                    {},
+                    {},
+                )
             case TokenType.OSub:
-                return new Opcode(OPCODE_MAP[TokenType.OSub], {
-                    LHS: 0,
-                    RHS: expr_,
-                }, {})
+                return new Opcode(
+                    OPCODE_MAP[TokenType.OSub].opcode,
+                    {
+                        NUM1: 0,
+                        NUM2: expr_,
+                    },
+                    {},
+                    {},
+                )
             case TokenType.ONot:
-                return new Opcode(OPCODE_MAP[TokenType.ONot], {
-                    VALUE: expr_,
-                }, {})
+                return new Opcode(
+                    OPCODE_MAP[TokenType.ONot].opcode,
+                    {
+                        VALUE: expr_,
+                    },
+                    {},
+                    {},
+                )
         }
         return new Unknown()
     }
@@ -202,65 +306,172 @@ class Transfer {
     generate_ir_expr_d(expr: ast.ExprD): Value {
         const lhs = this.generate_ir_expr(expr.lhs)
         const rhs = this.generate_ir_expr(expr.rhs)
-        if (OPCODE_MAP[expr.op.ty as keyof typeof OPCODE_MAP]) {
+        const op = OPCODE_MAP[expr.op.ty as keyof typeof OPCODE_MAP]
+        if (op) {
             return new Opcode(
-                OPCODE_MAP[expr.op.ty as keyof typeof OPCODE_MAP],
-                {
-                    LHS: lhs,
-                    RHS: rhs,
-                },
+                op.opcode,
+                { [op.lhs]: lhs, [op.rhs]: rhs },
+                {},
                 {},
             )
         } else {
             switch (expr.op.ty) {
-                case TokenType.OAssign:
-                    return new Opcode(opcodes.OPCODE_DATA_SETVARIABLETO, {
-                        VARIABLE: new Unknown(),
-                        VALUE: rhs,
-                    }, {})
+                case TokenType.OAssign: {
+                    if (!(expr.lhs instanceof ast.Ident)) {
+                        return new Unknown()
+                    }
+                    const variable = this.get_name(
+                        expr.lhs.name.value as string,
+                    )
+                    let value: Value
+                    if (expr.rhs instanceof ast.ExprCall) {
+                        const def_name = (expr.rhs.expr as ast.Ident).name
+                            .value as string
+                        const definition = this.definitions[def_name]
+                        this.branch?.blocks.push(
+                            this.generate_ir_expr_call(
+                                expr.rhs,
+                            ) as CallDefinition,
+                        )
+                        value = definition.ret_var
+                    } else {
+                        value = rhs
+                    }
+                    if (variable instanceof Variable) {
+                        return new Opcode(
+                            opcodes.OPCODE_DATA_SETVARIABLETO,
+                            {
+                                VALUE: value,
+                            },
+                            {},
+                            {
+                                VARIABLE: [variable.name, variable.id],
+                            },
+                        )
+                    } else if (variable instanceof StackVariable) {
+                        return new Opcode(
+                            opcodes.OPCODE_DATA_REPLACEITEMOFLIST,
+                            {
+                                INDEX: variable.offset + 1,
+                                ITEM: value,
+                            },
+                            {},
+                            {
+                                LIST: [this.stack.name, this.stack.id],
+                            },
+                        )
+                    }
+                    return new Unknown()
+                }
                 case TokenType.OFloorDiv:
-                    return new Opcode('__op_floor', {
-                        VALUE: new Opcode(OPCODE_MAP[TokenType.ODiv], {
-                            LHS: lhs,
-                            RHS: rhs,
-                        }, {}),
-                    }, {})
+                    return new Opcode(
+                        opcodes.OPCODE_OPERATOR_MATHOP,
+                        {
+                            NUM: new Opcode(
+                                OPCODE_MAP[TokenType.ODiv].opcode,
+                                {
+                                    NUM1: lhs,
+                                    NUM2: rhs,
+                                },
+                                {},
+                                {
+                                    OPERATOR: ['floor', null],
+                                },
+                            ),
+                        },
+                        {},
+                        {},
+                    )
                 case TokenType.OPow:
-                    return new Opcode('__op_exp', {
-                        VALUE: new Opcode(OPCODE_MAP[TokenType.OMul], {
-                            LHS: new Opcode('__op_log', {
-                                VALUE: lhs,
-                            }, {}),
-                            RHS: rhs,
-                        }, {}),
-                    }, {})
+                    return new Opcode(
+                        opcodes.OPCODE_OPERATOR_MATHOP,
+                        {
+                            VALUE: new Opcode(
+                                OPCODE_MAP[TokenType.OMul].opcode,
+                                {
+                                    NUM1: new Opcode(
+                                        opcodes.OPCODE_OPERATOR_MATHOP,
+                                        {
+                                            VALUE: lhs,
+                                        },
+                                        {},
+                                        {
+                                            OPERATOR: ['log', null],
+                                        },
+                                    ),
+                                    NUM2: rhs,
+                                },
+                                {},
+                                {},
+                            ),
+                        },
+                        {},
+                        {
+                            OPERATOR: ['e^', null],
+                        },
+                    )
                 case TokenType.ONe:
-                    return new Opcode(OPCODE_MAP[TokenType.ONot], {
-                        VALUE: new Opcode(OPCODE_MAP[TokenType.OEq], {
-                            LHS: lhs,
-                            RHS: rhs,
-                        }, {}),
-                    }, {})
+                    return new Opcode(
+                        OPCODE_MAP[TokenType.ONot].opcode,
+                        {
+                            VALUE: new Opcode(
+                                OPCODE_MAP[TokenType.OEq].opcode,
+                                {
+                                    LHS: lhs,
+                                    RHS: rhs,
+                                },
+                                {},
+                                {},
+                            ),
+                        },
+                        {},
+                        {},
+                    )
                 case TokenType.OLe:
-                    return new Opcode(OPCODE_MAP[TokenType.ONot], {
-                        VALUE: new Opcode(OPCODE_MAP[TokenType.OGt], {
-                            LHS: lhs,
-                            RHS: rhs,
-                        }, {}),
-                    }, {})
+                    return new Opcode(
+                        OPCODE_MAP[TokenType.ONot].opcode,
+                        {
+                            VALUE: new Opcode(
+                                OPCODE_MAP[TokenType.OGt].opcode,
+                                {
+                                    LHS: lhs,
+                                    RHS: rhs,
+                                },
+                                {},
+                                {},
+                            ),
+                        },
+                        {},
+                        {},
+                    )
                 case TokenType.OGe:
-                    return new Opcode(OPCODE_MAP[TokenType.ONot], {
-                        VALUE: new Opcode(OPCODE_MAP[TokenType.OLt], {
-                            LHS: lhs,
-                            RHS: rhs,
-                        }, {}),
-                    }, {})
+                    return new Opcode(
+                        OPCODE_MAP[TokenType.ONot].opcode,
+                        {
+                            VALUE: new Opcode(
+                                OPCODE_MAP[TokenType.OLt].opcode,
+                                {
+                                    LHS: lhs,
+                                    RHS: rhs,
+                                },
+                                {},
+                                {},
+                            ),
+                        },
+                        {},
+                        {},
+                    )
             }
         }
-        return new Opcode('unknown', {
-            LHS: lhs,
-            RHS: rhs,
-        }, {})
+        return new Opcode(
+            'unknown',
+            {
+                LHS: lhs,
+                RHS: rhs,
+            },
+            {},
+            {},
+        )
     }
 
     generate_ir_expr_i(_expr: ast.ExprI): Value {
@@ -271,8 +482,9 @@ class Transfer {
         if (!(expr.expr instanceof ast.Ident)) {
             return new Unknown()
         }
+        const callee = expr.expr.name.value as string
         return new CallDefinition(
-            this.sprite!.definitions[expr.expr.name.value as string],
+            this.definitions[callee],
             expr.args.map((arg) => this.generate_ir_expr(arg)),
         )
     }
@@ -282,14 +494,42 @@ class Transfer {
     }
 
     generate_ir_if_stmt(stmt: ast.IfStatement): Block {
-        if (stmt.else_case) {
-            return new Opcode(opcodes.OPCODE_CONTROL_IF_ELSE, {}, {})
+        if (stmt.else_case || stmt.elif_cases.length > 0) {
+            let last_case: Opcode
+            const last_body = stmt.elif_cases[stmt.elif_cases.length - 1]
+            if (stmt.else_case) {
+                last_case = new Opcode(opcodes.OPCODE_CONTROL_IF_ELSE, {
+                    CONDITION: this.generate_ir_expr(last_body.expr),
+                }, {
+                    SUBSTACK: this.generate_ir_block(last_body.body),
+                    SUBSTACK2: this.generate_ir_block(stmt.else_case.body),
+                }, {})
+            } else {
+                last_case = new Opcode(opcodes.OPCODE_CONTROL_IF, {
+                    CONDITION: this.generate_ir_expr(last_body.expr),
+                }, {
+                    SUBSTACK: this.generate_ir_block(last_body.body),
+                }, {})
+            }
+            return [stmt, ...stmt.elif_cases.slice(0, -1)].reduceRight(
+                (p, v) => {
+                    const branch = new Branch()
+                    branch.blocks.push(p)
+                    return new Opcode(opcodes.OPCODE_CONTROL_IF_ELSE, {
+                        CONDITION: this.generate_ir_expr(v.expr),
+                    }, {
+                        SUBSTACK: this.generate_ir_block(v.body),
+                        SUBSTACK2: branch,
+                    }, {})
+                },
+                last_case,
+            )
         } else {
             return new Opcode(opcodes.OPCODE_CONTROL_IF, {
                 CONDITION: this.generate_ir_expr(stmt.expr),
             }, {
-                BRANCH: this.generate_ir_block(stmt.body),
-            })
+                SUBSTACK: this.generate_ir_block(stmt.body),
+            }, {})
         }
     }
 
@@ -303,12 +543,26 @@ class Transfer {
 
     generate_ir_return_stmt(stmt: ast.ReturnStatement): Block {
         if (stmt.expr) {
+            const ret_var = this.get_ret(0)
             this.branch!.blocks.push(
-                new Opcode(opcodes.OPCODE_DATA_SETVARIABLETO, {
-                    VARIABLE: this.get_ret(0),
-                    VALUE: this.generate_ir_expr(stmt.expr),
-                }, {}),
+                new Opcode(
+                    opcodes.OPCODE_DATA_SETVARIABLETO,
+                    {
+                        VALUE: this.generate_ir_expr(stmt.expr),
+                    },
+                    {},
+                    {
+                        VARIABLE: [ret_var.name, ret_var.id],
+                    },
+                ),
             )
+        }
+        if (this.block_scope.length > 0) {
+            const number_scopes = this.block_scope.pop()!
+            for (let i = 0; i < number_scopes; ++i) {
+                this.branch!.blocks.push(new CommandPopStack(this.stack))
+            }
+            this.block_scope.push(0)
         }
         return new CommandReturn()
     }
